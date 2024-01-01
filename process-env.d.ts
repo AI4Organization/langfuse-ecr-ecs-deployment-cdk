@@ -29,5 +29,12 @@ declare module NodeJS {
          * Port number on which the application will run.
          */
         PORT: string;
+        /**
+         * Port number of the databse will run.
+         */
+        DB_PORT: string;
+        POSTGRES_USER: string;
+        POSTGRES_PASSWORD: string;
+        POSTGRES_DB: string;
     }
 }
