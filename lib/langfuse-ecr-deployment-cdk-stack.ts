@@ -3,7 +3,7 @@ import { Construct } from 'constructs';
 import * as ecrDeploy from 'cdk-ecr-deployment';
 import * as ecr from 'aws-cdk-lib/aws-ecr';
 import { LangfuseDockerImageEcrDeploymentCdkStackProps } from './LangfuseDockerImageEcrDeploymentCdkStackProps';
-import { LATEST_IMAGE_VERSION } from './langfuse-ecr-apprunner-deployment-cdk-stack';
+import { LATEST_IMAGE_VERSION } from '../bin/langfuse-ecr-ecs-deployment-cdk';
 
 export class LangfuseEcrEcsDeploymentCdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: LangfuseDockerImageEcrDeploymentCdkStackProps) {

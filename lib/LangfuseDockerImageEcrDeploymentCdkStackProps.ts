@@ -21,4 +21,12 @@ export interface LangfuseDockerImageEcrDeploymentCdkStackProps extends cdk.Stack
    * The deployment environment (e.g., 'development', 'production').
    */
   readonly environment: string;
+  /**
+   * The platform string indicating the CPU architecture, e.g., 'arm' or 'x86_64'.
+   */
+  readonly platformString: string;
+  /**
+   * The AWS region where the deployment will occur. This is optional and can be undefined.
+   */
+  readonly deployRegion: string | undefined;
 }
