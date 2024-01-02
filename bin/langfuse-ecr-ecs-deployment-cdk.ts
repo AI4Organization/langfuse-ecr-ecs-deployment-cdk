@@ -1,9 +1,13 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
+
 import * as cdk from 'aws-cdk-lib';
 import { LangfuseEcrEcsDeploymentCdkStack } from '../lib/langfuse-ecr-ecs-deployment-cdk-stack';
 
 const app = new cdk.App();
+
+export const LATEST_IMAGE_VERSION = 'latest';
+
 new LangfuseEcrEcsDeploymentCdkStack(app, 'LangfuseEcrEcsDeploymentCdkStack', {
   /* If you don't specify 'env', this stack will be environment-agnostic.
    * Account/Region-dependent features and context lookups will not work,

@@ -63,6 +63,7 @@ export class CdkAppRunnerWithVpcDeploymentStack extends cdk.Stack {
           },
         }
       }),
+      serviceName: `${props.appName}-${props.environment}-${props.platformString}-AppRunner-Service`,
     });
 
     // print out apprunnerService url
@@ -72,3 +73,5 @@ export class CdkAppRunnerWithVpcDeploymentStack extends cdk.Stack {
     });
   }
 }
+
+// Continue @ https://github.com/aws-samples/aws-apprunner-cdk/blob/main/cdk/lib/cdk-infra-stack.ts

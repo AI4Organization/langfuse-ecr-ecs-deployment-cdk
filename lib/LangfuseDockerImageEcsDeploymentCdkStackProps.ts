@@ -1,4 +1,4 @@
-import { DockerEnvTyped } from '../process-env-typed';
+import { DatabaseEnvTyped, DockerEnvTyped } from '../process-env-typed';
 import { LangfuseDockerImageEcrDeploymentCdkStackProps } from './LangfuseDockerImageEcrDeploymentCdkStackProps';
 
 export interface LangfuseDockerImageEcsDeploymentCdkStackProps extends LangfuseDockerImageEcrDeploymentCdkStackProps {
@@ -14,4 +14,7 @@ export interface LangfuseDockerImageEcsDeploymentCdkStackProps extends LangfuseD
      * The Docker environment variables and run arguments.
      */
     readonly dockerRunArgs: DockerEnvTyped,
+
+
+    readonly databaseArgs: DatabaseEnvTyped;
 }
