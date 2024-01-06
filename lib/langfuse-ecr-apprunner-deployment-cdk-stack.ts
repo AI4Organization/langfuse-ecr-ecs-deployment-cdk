@@ -2,6 +2,7 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as apprunner from '@aws-cdk/aws-apprunner-alpha';
+import * as iam from 'aws-cdk-lib/aws-iam';
 import { Cpu, Memory } from '@aws-cdk/aws-apprunner-alpha';
 import { LangfuseDockerImageEcsDeploymentCdkStackProps } from './LangfuseDockerImageEcsDeploymentCdkStackProps';
 
@@ -37,6 +38,45 @@ export class CdkAppRunnerWithVpcDeploymentStack extends cdk.NestedStack {
       securityGroups: [httpSG, httpsSG],
     });
 
+    // define apprunner role to access ecr
+    const appRunnerRole = new iam.Role(
+      this,
+      `${props.appName}-${props.environment}-apprunner-role`,
+      {
+        assumedBy: new iam.ServicePrincipal("build.apprunner.amazonaws.com"),
+        description: `${props.appName}-${props.environment}-apprunner-role`,
+        inlinePolicies: {
+          apprunnerpolicy: new iam.PolicyDocument({
+            statements: [
+              new iam.PolicyStatement({
+                effect: iam.Effect.ALLOW,
+                actions: ["ecr:GetAuthorizationToken"],
+                resources: ["*"],
+              }),
+              new iam.PolicyStatement({
+                effect: iam.Effect.ALLOW,
+                actions: [
+                  "ecr:BatchCheckLayerAvailability",
+                  "ecr:GetDownloadUrlForLayer",
+                  "ecr:GetRepositoryPolicy",
+                  "ecr:DescribeRepositories",
+                  "ecr:ListImages",
+                  "ecr:DescribeImages",
+                  "ecr:BatchGetImage",
+                  "ecr:GetLifecyclePolicy",
+                  "ecr:GetLifecyclePolicyPreview",
+                  "ecr:ListTagsForResource",
+                  "ecr:DescribeImageScanFindings",
+                ],
+                resources: [props.ecrRepository.repositoryArn],
+              }),
+            ],
+          }),
+        },
+        roleName: `${props.appName}-${props.environment}-apprunner-role`,
+      }
+    );
+
     const imageVersion = props.imageVersion;
     console.log(`imageVersion: ${imageVersion}`);
 
@@ -52,10 +92,12 @@ export class CdkAppRunnerWithVpcDeploymentStack extends cdk.NestedStack {
         imageConfiguration: {
           port: containerPort,
           environmentVariables: {
-            ...props.dockerRunArgs
+            ...props.dockerRunArgs,
+            DATABASE_URL: props.DATABASE_URL,
           },
         }
       }),
+      accessRole: appRunnerRole,
       serviceName: `${props.appName}-${props.environment}-${props.platformString}-AppRunner-Service`,
     });
 
