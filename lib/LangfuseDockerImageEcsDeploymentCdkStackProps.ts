@@ -5,17 +5,9 @@ import { LangfuseDockerImageEcrDeploymentCdkStackProps } from './LangfuseDockerI
 
 export interface LangfuseDockerImageEcsDeploymentCdkStackProps extends LangfuseDockerImageEcrDeploymentCdkStackProps {
     /**
-     * The Docker image version to be deployed.
-     */
-    readonly imageVersion: string;
-    /**
      * The port number on which the container service will be available.
      */
     readonly containerPort: number;
-    /**
-     * The port number on which the database service will be available.
-     */
-    readonly databasePort: number;
     /**
      * The Docker environment variables and run arguments.
      */
@@ -36,5 +28,5 @@ export interface LangfuseDockerImageEcsDeploymentCdkStackProps extends LangfuseD
      * The URL of the database to be used by the application, typically
      * provided in the format: postgresql://username:password@host:port/database
      */
-    readonly DATABASE_URL: string;
+    readonly DATABASE_URL?: string;
 }
