@@ -20,26 +20,58 @@ export interface IEnvTypes {
      * Port number on which the application will run.
      */
     PORT: string;
-    /**
-     * Port number of the databse will run.
-     */
-    DB_PORT: string;
 }
 
 export interface DockerEnvTyped {
+    /**
+     * The environment the application is running in.
+     */
     readonly NODE_ENV: string;
+    /**
+     * The connection string for the application's database.
+     */
     readonly DATABASE_URL: string;
+    /**
+     * The secret used by NextAuth for authentication.
+     */
     readonly NEXTAUTH_SECRET: string;
+    /**
+     * A salt string for hashing or encryption.
+     */
     readonly SALT: string;
+    /**
+     * The base URL for the NextAuth application.
+     */
     readonly NEXTAUTH_URL: string;
+    /**
+     * Flag to enable or disable telemetry.
+     */
     readonly TELEMETRY_ENABLED: string;
+    /**
+     * Flag to enable or disable sign-up.
+     */
     readonly NEXT_PUBLIC_SIGN_UP_DISABLED: string;
+    /**
+     * Flag to enable or disable experimental features.
+     */
     readonly LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES: string;
 }
 
 export interface DatabaseEnvTyped {
+    /**
+     * The username for the database connection.
+     */
     readonly POSTGRES_USER: string;
+    /**
+     * The password for the database connection.
+     */
     readonly POSTGRES_PASSWORD: string;
+    /**
+     * The name of the database to connect to.
+     */
     readonly POSTGRES_DB: string;
+    /**
+     * The port number on which the database server is listening.
+     */
     readonly DB_PORT: string;
 }
