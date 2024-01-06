@@ -82,7 +82,7 @@ export class CdkLangfuseEcrEcsDeploymentStack extends cdk.Stack {
                 LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES: process.env.LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES!,
             },
             ecrRepository: ecrStack.ecrRepository,
-            DATABASE_URL: postgresStack.DATABASE_URL,
+            DATABASE_URL: postgresStack.DATABASE_URL, // TODO test with free postgres via https://www.elephantsql.com/
         };
 
         new CdkAppRunnerWithVpcDeploymentStack(this, `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkAppRunnerWithVpcDeploymentStack`, {

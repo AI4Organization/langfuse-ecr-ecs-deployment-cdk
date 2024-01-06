@@ -2,6 +2,7 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as rds from "aws-cdk-lib/aws-rds";
+import * as iam from "aws-cdk-lib/aws-iam";
 import { LangfusePostgresStackProps } from './LangfusePostgresStackProps';
 
 /**
@@ -30,6 +31,24 @@ export class CdkPostgreSQLDeploymentStack extends cdk.NestedStack {
             "Allow database access from within VPC."
         );
 
+        // Create a new IAM role that can be assumed by the RDS service
+        const rdsRole = new iam.Role(this, `${props.appName}-${props.environment}RDSRole`, {
+            assumedBy: new iam.ServicePrincipal('rds.amazonaws.com'),
+            roleName: `${props.appName}-${props.environment}RDSRole`,
+            description: `${props.appName}-${props.environment}RDSRole`,
+        });
+
+        // Add a policy to the role that allows it to connect to RDS databases, get secret values from Secrets Manager, and assume roles
+        rdsRole.addToPolicy(new iam.PolicyStatement({
+            actions: [
+                "rds-db:connect",
+                "secretsmanager:GetSecretValue",
+                "sts:AssumeRole"
+            ],
+            resources: ["*"],
+        }));
+        rdsRole.applyRemovalPolicy(cdk.RemovalPolicy.DESTROY);
+
         // define postgresql database
         const postgresDatabaseInstance = new rds.DatabaseInstance(
             this,
@@ -42,9 +61,8 @@ export class CdkPostgreSQLDeploymentStack extends cdk.NestedStack {
                     ec2.InstanceClass.BURSTABLE3,
                     ec2.InstanceSize.SMALL
                 ),
-                credentials: rds.Credentials.fromUsername(props.databaseArgs.POSTGRES_USER, {
-                    password: cdk.SecretValue.unsafePlainText(props.databaseArgs.POSTGRES_PASSWORD),
-                }),
+                // TODOP might be change credential via https://mim-armand.medium.com/easy-deploy-postgresql-rds-with-aws-cdk-f8a2753a93ab
+                credentials: rds.Credentials.fromPassword(props.databaseArgs.POSTGRES_USER, cdk.SecretValue.unsafePlainText(props.databaseArgs.POSTGRES_PASSWORD)),
                 vpc: langfuseVpc,
                 vpcSubnets: {
                     subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
@@ -56,15 +74,17 @@ export class CdkPostgreSQLDeploymentStack extends cdk.NestedStack {
                 backupRetention: cdk.Duration.days(5),
                 removalPolicy: cdk.RemovalPolicy.DESTROY,
                 storageEncrypted: true,
+                publiclyAccessible: false, // set to false to prevent public access
                 databaseName: props.databaseArgs.POSTGRES_DB,
             }
         );
+        postgresDatabaseInstance.grantConnect(rdsRole, props.databaseArgs.POSTGRES_USER);
 
         const dbHostName = postgresDatabaseInstance.instanceEndpoint.hostname;
-        this.DATABASE_URL = `postgresql://${props.databaseArgs.POSTGRES_USER}:${props.databaseArgs.POSTGRES_PASSWORD}@${dbHostName}:${props.databaseArgs.DB_PORT}/${props.databaseArgs.POSTGRES_DB}?createDatabaseIfNotExist=true`;
 
         const dbInstanceEndpointAddress = postgresDatabaseInstance.dbInstanceEndpointAddress;
         const dbInstanceEndpointPort = postgresDatabaseInstance.dbInstanceEndpointPort;
+        this.DATABASE_URL = `postgresql://${props.databaseArgs.POSTGRES_USER}:${props.databaseArgs.POSTGRES_PASSWORD}@${dbHostName}:${dbInstanceEndpointPort}/${props.databaseArgs.POSTGRES_DB}?createDatabaseIfNotExist=true`;
 
         // print out postgresDatabaseInstance endpoint
         new cdk.CfnOutput(this, `${props.appName}-${props.environment}-${props.deployRegion}-PostgresDatabaseInstanceEndpoint`, {
