@@ -28,11 +28,13 @@ export class CdkLangfuseEcrEcsDeploymentStack extends cdk.Stack {
 
         const ecrStack = new LangfuseEcrDeploymentCdkStack(this, `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-LangfuseEcrDeploymentCdkStack`, {
             ...ecrStackProps,
+            stackName: `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-LangfuseEcrDeploymentCdkStack`,
             description: `Langfuse ECR deployment stack for ${props.environment} environment in ${props.deployRegion} region.`,
         });
 
         const vpcStack = new LangfuseVpcDeploymentCdkStack(this, `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-LangfuseVpcDeploymentCdkStack`, {
             ...ecrStackProps,
+            stackName: `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-LangfuseVpcDeploymentCdkStack`,
             description: `Langfuse VPC deployment stack for ${props.environment} environment in ${props.deployRegion} region.`,
         });
 
@@ -49,6 +51,7 @@ export class CdkLangfuseEcrEcsDeploymentStack extends cdk.Stack {
 
         const postgresStack = new CdkPostgreSQLDeploymentStack(this, `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkPostgreSQLDeploymentStack`, {
             ...postgresStackProps,
+            stackName: `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkPostgreSQLDeploymentStack`,
             description: `Langfuse PostgreSQL deployment stack for ${props.environment} environment in ${props.deployRegion} region.`,
         });
 
@@ -74,6 +77,7 @@ export class CdkLangfuseEcrEcsDeploymentStack extends cdk.Stack {
 
         new CdkAppRunnerWithVpcDeploymentStack(this, `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkAppRunnerWithVpcDeploymentStack`, {
             ...appRunnerStackProps,
+            stackName: `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkAppRunnerWithVpcDeploymentStack`,
             description: `Langfuse App Runner deployment stack for ${props.environment} environment in ${props.deployRegion} region.`,
         });
     }
