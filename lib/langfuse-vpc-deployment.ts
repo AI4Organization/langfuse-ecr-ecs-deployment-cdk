@@ -14,24 +14,31 @@ import { LangfuseDockerImageEcsDeploymentCdkStackProps } from "./LangfuseDockerI
  * @returns {ec2.Vpc} The created VPC.
  */
 export function createVPC(stack: cdk.Stack, props: LangfuseDockerImageEcsDeploymentCdkStackProps): ec2.Vpc {
-    const vpcName = `${props.appName}-VPC`;
-    const cxVpc = new ec2.Vpc(stack, vpcName, {
+    const vpcName = `${props.appName}-${props.environment}-${props.deployRegion}-VPC`;
+    const vpc = new ec2.Vpc(stack, vpcName, {
         ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'), //IPs in Range - 65,536
         natGateways: 1,
         maxAzs: 3, // for high availability
         subnetConfiguration: [
             {
-                name: "Public",
+                name: `${props.appName}-${props.environment}-Public`,
                 subnetType: ec2.SubnetType.PUBLIC,
                 cidrMask: 24, //IPs in Range - 256
             },
             {
-                name: "Private",
+                name: `${props.appName}-${props.environment}-Private`,
                 subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
                 cidrMask: 24, //IPs in Range - 256
             },
+            {
+                name: `${props.appName}-${props.environment}-Isolated`,
+                subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
+                cidrMask: 24, //IPs in Range - 256
+            },
         ],
+        vpcName,
     });
+    vpc.applyRemovalPolicy(cdk.RemovalPolicy.DESTROY);
 
     const vpcFlowLogRole = new iam.Role(stack, `${props.appName}-${props.environment}-RoleVpcFlowLogs`, {
         assumedBy: new iam.ServicePrincipal("vpc-flow-logs.amazonaws.com"),
@@ -51,10 +58,10 @@ export function createVPC(stack: cdk.Stack, props: LangfuseDockerImageEcsDeploym
     });
 
     new ec2.FlowLog(stack, `${props.appName}-${props.environment}-VpcFlowLog`, {
-        resourceType: ec2.FlowLogResourceType.fromVpc(cxVpc),
+        resourceType: ec2.FlowLogResourceType.fromVpc(vpc),
         destination: ec2.FlowLogDestination.toCloudWatchLogs(vpcFlowLogGroup, vpcFlowLogRole),
         trafficType: FlowLogTrafficType.ALL,
     });
 
-    return cxVpc;
+    return vpc;
 }
