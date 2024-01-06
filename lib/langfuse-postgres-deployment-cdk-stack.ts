@@ -2,7 +2,7 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as rds from "aws-cdk-lib/aws-rds";
-import { LangfuseDockerImageEcsDeploymentCdkStackProps } from './LangfuseDockerImageEcsDeploymentCdkStackProps';
+import { LangfusePostgresStackProps } from './LangfusePostgresStackProps';
 
 /**
  * Represents a CDK stack for deploying a PostgreSQL database instance.
@@ -13,7 +13,7 @@ export class CdkPostgreSQLDeploymentStack extends cdk.NestedStack {
     public postgresDatabaseInstance: cdk.aws_rds.DatabaseInstance;
     public DATABASE_URL: string;
 
-    constructor(scope: Construct, id: string, props: LangfuseDockerImageEcsDeploymentCdkStackProps) {
+    constructor(scope: Construct, id: string, props: LangfusePostgresStackProps) {
         super(scope, id, props);
         const langfuseVpc = props.vpc;
 
