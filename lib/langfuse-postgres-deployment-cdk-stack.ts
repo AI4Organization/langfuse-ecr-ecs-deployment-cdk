@@ -11,6 +11,7 @@ import { LangfuseDockerImageEcsDeploymentCdkStackProps } from './LangfuseDockerI
  */
 export class CdkPostgreSQLDeploymentStack extends cdk.NestedStack {
     public postgresDatabaseInstance: cdk.aws_rds.DatabaseInstance;
+    public DATABASE_URL: string;
 
     constructor(scope: Construct, id: string, props: LangfuseDockerImageEcsDeploymentCdkStackProps) {
         super(scope, id, props);
@@ -61,11 +62,21 @@ export class CdkPostgreSQLDeploymentStack extends cdk.NestedStack {
             }
         );
 
+        const dbHostName = this.postgresDatabaseInstance.instanceEndpoint.hostname;
+        this.DATABASE_URL = `postgres://${props.databaseArgs.POSTGRES_USER}:${props.databaseArgs.POSTGRES_PASSWORD}@${dbHostName}:${props.databaseArgs.DB_PORT}/${props.databaseArgs.POSTGRES_DB}?createDatabaseIfNotExist=true`;
+
         // print out postgresDatabaseInstance endpoint
         new cdk.CfnOutput(this, `${props.appName}-${props.environment}-PostgresDatabaseInstanceEndpoint`, {
             value: this.postgresDatabaseInstance.instanceEndpoint.hostname,
             exportName: `${props.appName}-${props.environment}-PostgresDatabaseInstanceEndpoint`,
             description: "PostgreSQL database instance endpoint.",
+        });
+
+        // print out DATABASE_URL
+        new cdk.CfnOutput(this, `${props.appName}-${props.environment}-DATABASE_URL`, {
+            value: this.DATABASE_URL,
+            exportName: `${props.appName}-${props.environment}-DATABASE_URL`,
+            description: "PostgreSQL database URL.",
         });
     }
 }
