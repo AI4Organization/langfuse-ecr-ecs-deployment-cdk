@@ -29,7 +29,7 @@ const envTyped: IEnvTypes = {
 
 for (const cdkRegion of cdkRegions) {
   for (const environment of deployEnvironments) {
-    new CdkLangfuseEcrEcsDeploymentStack(app, 'CdkLangfuseEcrEcsDeploymentStack', {
+    new CdkLangfuseEcrEcsDeploymentStack(app, `${envTyped.APP_NAME}-${environment}-${cdkRegion}-CdkLangfuseEcrEcsDeploymentStack`, {
       env: {
         account,
         region: cdkRegion,
@@ -40,6 +40,7 @@ for (const cdkRegion of cdkRegions) {
       deployRegion: cdkRegion,
       environment,
       envTyped,
+      stackName: `${envTyped.APP_NAME}-${environment}-${cdkRegion}-CdkLangfuseEcrEcsDeploymentStack`,
       description: `Langfuse ECR/ECS deployment stack for ${environment} environment in ${cdkRegion} region.`,
     });
   }
