@@ -66,16 +66,16 @@ export class CdkPostgreSQLDeploymentStack extends cdk.NestedStack {
         this.DATABASE_URL = `postgresql://${props.databaseArgs.POSTGRES_USER}:${props.databaseArgs.POSTGRES_PASSWORD}@${dbHostName}:${props.databaseArgs.DB_PORT}/${props.databaseArgs.POSTGRES_DB}?createDatabaseIfNotExist=true`;
 
         // print out postgresDatabaseInstance endpoint
-        new cdk.CfnOutput(this, `${props.appName}-${props.environment}-PostgresDatabaseInstanceEndpoint`, {
+        new cdk.CfnOutput(this, `${props.appName}-${props.environment}-${props.deployRegion}-PostgresDatabaseInstanceEndpoint`, {
             value: this.postgresDatabaseInstance.instanceEndpoint.hostname,
-            exportName: `${props.appName}-${props.environment}-PostgresDatabaseInstanceEndpoint`,
+            exportName: `${props.appName}-${props.environment}-${props.deployRegion}-PostgresDatabaseInstanceEndpoint`,
             description: "PostgreSQL database instance endpoint.",
         });
 
         // print out DATABASE_URL
-        new cdk.CfnOutput(this, `${props.appName}-${props.environment}-DATABASE_URL`, {
+        new cdk.CfnOutput(this, `${props.appName}-${props.environment}-${props.deployRegion}-DATABASE-URL`, {
             value: this.DATABASE_URL,
-            exportName: `${props.appName}-${props.environment}-DATABASE_URL`,
+            exportName: `${props.appName}-${props.environment}-${props.deployRegion}-DATABASE-URL`,
             description: "PostgreSQL database URL.",
         });
     }
