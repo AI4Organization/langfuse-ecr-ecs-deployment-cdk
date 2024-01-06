@@ -32,7 +32,6 @@ export class CdkPostgreSQLDeploymentStack extends cdk.NestedStack {
         );
 
         // define postgresql database
-        const databaseName = `${props.appName}-${props.environment}-db`;
         this.postgresDatabaseInstance = new rds.DatabaseInstance(
             this,
             `${props.appName}-${props.environment}-postgres-rds`,
@@ -58,7 +57,7 @@ export class CdkPostgreSQLDeploymentStack extends cdk.NestedStack {
                 backupRetention: cdk.Duration.days(5),
                 removalPolicy: cdk.RemovalPolicy.DESTROY,
                 storageEncrypted: true,
-                databaseName,
+                databaseName: props.databaseArgs.POSTGRES_DB,
             }
         );
 
