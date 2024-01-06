@@ -101,7 +101,6 @@ export class CdkAppRunnerWithVpcDeploymentStack extends cdk.NestedStack {
           port: containerPort,
           environmentVariables: {
             ...props.dockerRunArgs,
-            DATABASE_URL: props.DATABASE_URL,
           },
         }
       }),
