@@ -7,7 +7,7 @@ import { Cpu, Memory } from '@aws-cdk/aws-apprunner-alpha';
 import { LangfuseDockerImageEcsDeploymentCdkStackProps } from './LangfuseDockerImageEcsDeploymentCdkStackProps';
 import { createVPC } from './langfuse-vpc-deployment';
 
-export class CdkAppRunnerWithVpcDeploymentStack extends cdk.Stack {
+export class CdkAppRunnerWithVpcDeploymentStack extends cdk.NestedStack {
   constructor(scope: Construct, id: string, props: LangfuseDockerImageEcsDeploymentCdkStackProps) {
     super(scope, id, props);
 
@@ -39,13 +39,8 @@ export class CdkAppRunnerWithVpcDeploymentStack extends cdk.Stack {
       securityGroups: [httpSG, httpsSG],
     });
 
-    const ecrRepositoryName = props.repositoryName;
-    console.log(`ecrRepositoryName: ${ecrRepositoryName}`);
-
     const imageVersion = props.imageVersion;
     console.log(`imageVersion: ${imageVersion}`);
-
-    const ecrRepository = ecr.Repository.fromRepositoryName(this, `${props.environment}-${props.platformString}-${props.deployRegion}-ERCRepository`, ecrRepositoryName);
 
     const containerPort = props.containerPort;
     const apprunnerService = new apprunner.Service(this, `${props.appName}-${props.environment}-${props.platformString}-AppRunner-Service`, {
@@ -54,7 +49,7 @@ export class CdkAppRunnerWithVpcDeploymentStack extends cdk.Stack {
       autoDeploymentsEnabled: true,
       vpcConnector,
       source: apprunner.Source.fromEcr({
-        repository: ecrRepository,
+        repository: props.ecrRepository,
         tag: imageVersion,
         imageConfiguration: {
           port: containerPort,
