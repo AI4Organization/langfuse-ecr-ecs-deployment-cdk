@@ -36,6 +36,8 @@ for (const cdkRegion of cdkRegions) {
       },
       tags: {
         environment,
+        appName: envTyped.APP_NAME,
+        AppManagerCFNStackKey: 'true',
       },
       deployRegion: cdkRegion,
       environment,
