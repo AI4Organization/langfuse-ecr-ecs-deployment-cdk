@@ -32,10 +32,10 @@ export class CdkPostgreSQLDeploymentStack extends cdk.NestedStack {
         );
 
         // Create a new IAM role that can be assumed by the RDS service
-        const rdsRole = new iam.Role(this, `${props.appName}-${props.environment}RDSRole`, {
+        const rdsRole = new iam.Role(this, `${props.appName}-${props.environment}-RDSRole`, {
             assumedBy: new iam.ServicePrincipal('rds.amazonaws.com'),
-            roleName: `${props.appName}-${props.environment}RDSRole`,
-            description: `${props.appName}-${props.environment}RDSRole`,
+            roleName: `${props.appName}-${props.environment}-RDSRole`,
+            description: `${props.appName}-${props.environment}-RDSRole`,
         });
 
         // Add a policy to the role that allows it to connect to RDS databases, get secret values from Secrets Manager, and assume roles
@@ -84,7 +84,7 @@ export class CdkPostgreSQLDeploymentStack extends cdk.NestedStack {
 
         const dbInstanceEndpointAddress = postgresDatabaseInstance.dbInstanceEndpointAddress;
         const dbInstanceEndpointPort = postgresDatabaseInstance.dbInstanceEndpointPort;
-        this.DATABASE_URL = `postgresql://${props.databaseArgs.POSTGRES_USER}:${props.databaseArgs.POSTGRES_PASSWORD}@${dbHostName}:${dbInstanceEndpointPort}/${props.databaseArgs.POSTGRES_DB}?createDatabaseIfNotExist=true`;
+        this.DATABASE_URL = `postgres://${props.databaseArgs.POSTGRES_USER}:${props.databaseArgs.POSTGRES_PASSWORD}@${dbHostName}:${dbInstanceEndpointPort}/${props.databaseArgs.POSTGRES_DB}`;
 
         // print out postgresDatabaseInstance endpoint
         new cdk.CfnOutput(this, `${props.appName}-${props.environment}-${props.deployRegion}-PostgresDatabaseInstanceEndpoint`, {

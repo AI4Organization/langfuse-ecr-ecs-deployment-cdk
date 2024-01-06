@@ -94,6 +94,7 @@ export class CdkAppRunnerWithVpcDeploymentStack extends cdk.NestedStack {
       memory: Memory.TWO_GB,
       autoDeploymentsEnabled: true,
       vpcConnector,
+      // todo copy local image to here and build from local image
       source: apprunner.Source.fromEcr({
         repository: props.ecrRepository,
         tagOrDigest: imageVersion,

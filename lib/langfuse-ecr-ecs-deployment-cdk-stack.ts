@@ -76,13 +76,14 @@ export class CdkLangfuseEcrEcsDeploymentStack extends cdk.Stack {
                 NODE_ENV: process.env.NODE_ENV!,
                 NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET!,
                 SALT: process.env.SALT!,
-                TELEMETRY_ENABLED: process.env.TELEMETRY_ENABLED!,
+                TELEMETRY_ENABLED: process.env.TELEMETRY_ENABLED!, // todo change to boolean
                 NEXTAUTH_URL: process.env.NEXTAUTH_URL!,
-                NEXT_PUBLIC_SIGN_UP_DISABLED: process.env.NEXT_PUBLIC_SIGN_UP_DISABLED!,
-                LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES: process.env.LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES!,
+                NEXT_PUBLIC_SIGN_UP_DISABLED: process.env.NEXT_PUBLIC_SIGN_UP_DISABLED!, // todo change to boolean
+                LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES: process.env.LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES!, // todo change to boolean
             },
             ecrRepository: ecrStack.ecrRepository,
-            DATABASE_URL: postgresStack.DATABASE_URL, // TODO test with free postgres via https://www.elephantsql.com/
+            // DATABASE_URL: postgresStack.DATABASE_URL, // TODO test with free postgres via https://www.elephantsql.com/
+            DATABASE_URL: `postgres://zuoznelq:GGMIjVd0kyqG5K9uZMR21ya_qz7X3kX9@pom.db.elephantsql.com/zuoznelq`,
         };
 
         new CdkAppRunnerWithVpcDeploymentStack(this, `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkAppRunnerWithVpcDeploymentStack`, {
