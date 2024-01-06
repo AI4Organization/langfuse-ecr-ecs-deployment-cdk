@@ -26,9 +26,15 @@ export class CdkLangfuseEcrEcsDeploymentStack extends cdk.Stack {
             stackName: `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-LangfuseEcrDeploymentCdkStack`,
         };
 
-        const ecrStack = new LangfuseEcrDeploymentCdkStack(this, `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-LangfuseEcrDeploymentCdkStack`, ecrStackProps);
+        const ecrStack = new LangfuseEcrDeploymentCdkStack(this, `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-LangfuseEcrDeploymentCdkStack`, {
+            ...ecrStackProps,
+            description: `Langfuse ECR deployment stack for ${props.environment} environment in ${props.deployRegion} region.`,
+        });
 
-        const vpcStack = new LangfuseVpcDeploymentCdkStack(this, `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-LangfuseVpcDeploymentCdkStack`, ecrStackProps);
+        const vpcStack = new LangfuseVpcDeploymentCdkStack(this, `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-LangfuseVpcDeploymentCdkStack`, {
+            ...ecrStackProps,
+            description: `Langfuse VPC deployment stack for ${props.environment} environment in ${props.deployRegion} region.`,
+        });
 
         const postgresStackProps: LangfusePostgresStackProps = {
             ...ecrStackProps,
@@ -41,7 +47,10 @@ export class CdkLangfuseEcrEcsDeploymentStack extends cdk.Stack {
             },
         };
 
-        const postgresStack = new CdkPostgreSQLDeploymentStack(this, `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkPostgreSQLDeploymentStack`, postgresStackProps);
+        const postgresStack = new CdkPostgreSQLDeploymentStack(this, `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkPostgreSQLDeploymentStack`, {
+            ...postgresStackProps,
+            description: `Langfuse PostgreSQL deployment stack for ${props.environment} environment in ${props.deployRegion} region.`,
+        });
 
         // check docker env variables
         checkEnvVariables('NODE_ENV', 'NEXTAUTH_SECRET', 'SALT', 'TELEMETRY_ENABLED', 'NEXTAUTH_URL', 'NEXT_PUBLIC_SIGN_UP_DISABLED', 'LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES');
@@ -63,6 +72,9 @@ export class CdkLangfuseEcrEcsDeploymentStack extends cdk.Stack {
             DATABASE_URL: postgresStack.DATABASE_URL,
         };
 
-        new CdkAppRunnerWithVpcDeploymentStack(this, `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkAppRunnerWithVpcDeploymentStack`, appRunnerStackProps);
+        new CdkAppRunnerWithVpcDeploymentStack(this, `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkAppRunnerWithVpcDeploymentStack`, {
+            ...appRunnerStackProps,
+            description: `Langfuse App Runner deployment stack for ${props.environment} environment in ${props.deployRegion} region.`,
+        });
     }
 }
