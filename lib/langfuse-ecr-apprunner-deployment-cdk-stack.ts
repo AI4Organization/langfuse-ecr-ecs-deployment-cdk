@@ -96,7 +96,7 @@ export class CdkAppRunnerWithVpcDeploymentStack extends cdk.NestedStack {
       vpcConnector,
       source: apprunner.Source.fromEcr({
         repository: props.ecrRepository,
-        tag: imageVersion,
+        tagOrDigest: imageVersion,
         imageConfiguration: {
           port: containerPort,
           environmentVariables: {
