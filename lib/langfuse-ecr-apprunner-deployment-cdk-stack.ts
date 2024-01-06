@@ -6,6 +6,14 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 import { Cpu, Memory } from '@aws-cdk/aws-apprunner-alpha';
 import { LangfuseDockerImageEcsDeploymentCdkStackProps } from './LangfuseDockerImageEcsDeploymentCdkStackProps';
 
+/**
+ * Represents a CDK stack for deploying an AWS App Runner service within a VPC.
+ * This stack creates an App Runner service with a VPC connector for network isolation
+ * and sets up the necessary security groups and roles.
+ *
+ * @class CdkAppRunnerWithVpcDeploymentStack
+ * @extends {cdk.NestedStack}
+ */
 export class CdkAppRunnerWithVpcDeploymentStack extends cdk.NestedStack {
   constructor(scope: Construct, id: string, props: LangfuseDockerImageEcsDeploymentCdkStackProps) {
     super(scope, id, props);
