@@ -24,7 +24,7 @@ declare module NodeJS {
         /**
          * Comma-separated list of platforms (e.g., "linux/amd64,linux/arm64").
          */
-        PLATFORMS: string;
+        PLATFORMS?: string;
         /**
          * Port number on which the application will run.
          */

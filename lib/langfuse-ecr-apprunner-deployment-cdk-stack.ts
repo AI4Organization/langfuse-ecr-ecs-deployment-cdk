@@ -20,7 +20,7 @@ export class CdkAppRunnerWithVpcDeploymentStack extends cdk.NestedStack {
 
     const langfuseVpc = props.vpc;
 
-    const httpSG = new ec2.SecurityGroup(this, `${props.appName}-${props.environment}-${props.platformString}-HttpSG`, {
+    const httpSG = new ec2.SecurityGroup(this, `${props.appName}-${props.environment}-HttpSG`, {
       vpc: langfuseVpc,
       allowAllOutbound: true,
     });
@@ -30,7 +30,7 @@ export class CdkAppRunnerWithVpcDeploymentStack extends cdk.NestedStack {
       ec2.Port.tcp(80)
     );
 
-    const httpsSG = new ec2.SecurityGroup(this, `${props.appName}-${props.environment}-${props.platformString}-HttpsSG`, {
+    const httpsSG = new ec2.SecurityGroup(this, `${props.appName}-${props.environment}-HttpsSG`, {
       vpc: langfuseVpc,
       allowAllOutbound: true,
     });
@@ -89,7 +89,7 @@ export class CdkAppRunnerWithVpcDeploymentStack extends cdk.NestedStack {
     console.log(`imageVersion: ${imageVersion}`);
 
     const containerPort = props.containerPort;
-    const apprunnerService = new apprunner.Service(this, `${props.appName}-${props.environment}-${props.platformString}-AppRunner-Service`, {
+    const apprunnerService = new apprunner.Service(this, `${props.appName}-${props.environment}-AppRunner-Service`, {
       cpu: Cpu.ONE_VCPU,
       memory: Memory.TWO_GB,
       autoDeploymentsEnabled: true,
@@ -102,16 +102,16 @@ export class CdkAppRunnerWithVpcDeploymentStack extends cdk.NestedStack {
           environmentVariables: {
             ...props.dockerRunArgs,
           },
-        }
+        },
       }),
       accessRole: appRunnerRole,
-      serviceName: `${props.appName}-${props.environment}-${props.platformString}-AppRunner-Service`,
+      serviceName: `${props.appName}-${props.environment}-AppRunner-Service`,
     });
 
     // print out apprunnerService url
-    new cdk.CfnOutput(this, `${props.appName}-${props.environment}-${props.platformString}-AppRunner-Service-Url-With-Vpc`, {
+    new cdk.CfnOutput(this, `${props.appName}-${props.environment}-AppRunner-Service-Url-With-Vpc`, {
       value: `https://${apprunnerService.serviceUrl}`,
-      exportName: `${props.appName}-${props.environment}-${props.platformString}-AppRunner-Service-Url-With-Vpc`,
+      exportName: `${props.appName}-${props.environment}-AppRunner-Service-Url-With-Vpc`,
     });
   }
 }

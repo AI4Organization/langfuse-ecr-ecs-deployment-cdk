@@ -10,7 +10,7 @@ import { LATEST_IMAGE_VERSION } from '../bin/langfuse-ecr-ecs-deployment-cdk';
  * This stack creates an ECR repository, sets up lifecycle rules for image retention,
  * and handles the deployment of specified image versions from a Docker registry to ECR.
  */
-export class LangfuseEcrEcsDeploymentCdkStack extends cdk.NestedStack {
+export class LangfuseEcrDeploymentCdkStack extends cdk.NestedStack {
   /**
    * The ECR repository where Docker images are stored.
    * @public
@@ -19,7 +19,7 @@ export class LangfuseEcrEcsDeploymentCdkStack extends cdk.NestedStack {
   public readonly ecrRepository: cdk.aws_ecr.Repository;
 
   /**
-   * Constructs a new instance of the LangfuseEcrEcsDeploymentCdkStack class.
+   * Constructs a new instance of the LangfuseEcrDeploymentCdkStack class.
    * @param {Construct} scope - The scope in which to define this construct.
    * @param {string} id - The scoped construct ID. Must be unique amongst siblings in the same scope.
    * @param {LangfuseDockerImageEcrDeploymentCdkStackProps} props - The stack properties.

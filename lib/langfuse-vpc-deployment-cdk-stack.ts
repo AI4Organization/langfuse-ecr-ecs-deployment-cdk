@@ -5,7 +5,7 @@ import * as logs from "aws-cdk-lib/aws-logs";
 import { Construct } from 'constructs';
 import { FlowLogTrafficType } from "aws-cdk-lib/aws-ec2";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
-import { LangfuseDockerImageEcsDeploymentCdkStackProps } from "./LangfuseDockerImageEcsDeploymentCdkStackProps";
+import { LangfuseDockerImageEcrDeploymentCdkStackProps } from "./LangfuseDockerImageEcrDeploymentCdkStackProps";
 
 /**
  * Represents a CDK stack for deploying a VPC suitable for ECS deployments.
@@ -15,7 +15,7 @@ import { LangfuseDockerImageEcsDeploymentCdkStackProps } from "./LangfuseDockerI
 export class LangfuseVpcDeploymentCdkStack extends cdk.NestedStack {
     public readonly vpc: ec2.Vpc;
 
-    constructor(scope: Construct, id: string, props: LangfuseDockerImageEcsDeploymentCdkStackProps) {
+    constructor(scope: Construct, id: string, props: LangfuseDockerImageEcrDeploymentCdkStackProps) {
         super(scope, id, props);
         this.vpc = createVPC(this, props);
     }
@@ -25,10 +25,10 @@ export class LangfuseVpcDeploymentCdkStack extends cdk.NestedStack {
  * Creates a VPC with public and private subnets, NAT gateways, and VPC flow logs.
  *
  * @param {cdk.Stack} stack - The parent CDK stack.
- * @param {LangfuseDockerImageEcsDeploymentCdkStackProps} props - Properties for VPC creation.
+ * @param {LangfuseDockerImageEcrDeploymentCdkStackProps} props - Properties for VPC creation.
  * @returns {ec2.Vpc} The created VPC.
  */
-export function createVPC(stack: cdk.Stack, props: LangfuseDockerImageEcsDeploymentCdkStackProps): ec2.Vpc {
+export function createVPC(stack: cdk.Stack, props: LangfuseDockerImageEcrDeploymentCdkStackProps): ec2.Vpc {
     const vpcName = `${props.appName}-${props.environment}-${props.deployRegion}-VPC`;
     const vpc = new ec2.Vpc(stack, vpcName, {
         ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'), //IPs in Range - 65,536

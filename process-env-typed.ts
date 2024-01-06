@@ -10,12 +10,12 @@ export interface IEnvTypes {
     /**
      * Optional version tag for the Docker image.
      */
-    readonly IMAGE_VERSION?: string;
+    readonly IMAGE_VERSION: string;
     /**
      * Comma-separated list of platforms for which the Docker image is built.
      * Example: "linux/amd64,linux/arm64"
      */
-    readonly PLATFORMS: string;
+    readonly PLATFORMS?: string;
     /**
      * Port number on which the application will run.
      */
