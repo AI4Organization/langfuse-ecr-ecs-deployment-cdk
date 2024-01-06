@@ -9,6 +9,7 @@ import { LangfuseDockerImageEcrDeploymentCdkStackProps } from './LangfuseDockerI
 import { LangfuseDockerImageEcsDeploymentCdkStackProps } from './LangfuseDockerImageEcsDeploymentCdkStackProps';
 import { LangfusePostgresStackProps } from './LangfusePostgresStackProps';
 import { CdkPostgreSQLDeploymentStack } from './langfuse-postgres-deployment-cdk-stack';
+import { CdkAppRunnerWithVpcDeploymentStack } from './langfuse-ecr-apprunner-deployment-cdk-stack';
 
 export class CdkLangfuseEcrEcsDeploymentStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props: LangfuseBaseStackProps) {
@@ -49,5 +50,27 @@ export class CdkLangfuseEcrEcsDeploymentStack extends cdk.Stack {
         };
 
         const postgresStack = new CdkPostgreSQLDeploymentStack(this, `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkPostgreSQLDeploymentStack`, postgresStackProps);
+
+        // check docker env variables
+        checkEnvVariables('NODE_ENV', 'NEXTAUTH_SECRET', 'SALT', 'DATABASE_URL', 'TELEMETRY_ENABLED', 'NEXTAUTH_URL', 'NEXT_PUBLIC_SIGN_UP_DISABLED', 'LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES');
+
+        const appRunnerStackProps: LangfuseDockerImageEcsDeploymentCdkStackProps = {
+            ...ecrStackProps,
+            ...postgresStackProps,
+            containerPort: parseInt(envTyped.PORT),
+            dockerRunArgs: {
+                NODE_ENV: process.env.NODE_ENV!,
+                NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET!,
+                SALT: process.env.SALT!,
+                TELEMETRY_ENABLED: process.env.TELEMETRY_ENABLED!,
+                NEXTAUTH_URL: process.env.NEXTAUTH_URL!,
+                NEXT_PUBLIC_SIGN_UP_DISABLED: process.env.NEXT_PUBLIC_SIGN_UP_DISABLED!,
+                LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES: process.env.LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES!,
+            },
+            ecrRepository: ecrStack.ecrRepository,
+            DATABASE_URL: postgresStack.DATABASE_URL,
+        };
+
+        new CdkAppRunnerWithVpcDeploymentStack(this, `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkAppRunnerWithVpcDeploymentStack`, appRunnerStackProps);
     }
 }

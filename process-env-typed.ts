@@ -28,10 +28,6 @@ export interface DockerEnvTyped {
      */
     readonly NODE_ENV: string;
     /**
-     * The connection string for the application's database.
-     */
-    readonly DATABASE_URL: string;
-    /**
      * The secret used by NextAuth for authentication.
      */
     readonly NEXTAUTH_SECRET: string;
