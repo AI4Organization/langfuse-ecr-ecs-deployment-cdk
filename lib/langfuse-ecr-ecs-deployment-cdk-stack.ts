@@ -44,7 +44,7 @@ export class CdkLangfuseEcrEcsDeploymentStack extends cdk.Stack {
         const postgresStack = new CdkPostgreSQLDeploymentStack(this, `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkPostgreSQLDeploymentStack`, postgresStackProps);
 
         // check docker env variables
-        checkEnvVariables('NODE_ENV', 'NEXTAUTH_SECRET', 'SALT', 'DATABASE_URL', 'TELEMETRY_ENABLED', 'NEXTAUTH_URL', 'NEXT_PUBLIC_SIGN_UP_DISABLED', 'LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES');
+        checkEnvVariables('NODE_ENV', 'NEXTAUTH_SECRET', 'SALT', 'TELEMETRY_ENABLED', 'NEXTAUTH_URL', 'NEXT_PUBLIC_SIGN_UP_DISABLED', 'LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES');
 
         const appRunnerStackProps: LangfuseDockerImageEcsDeploymentCdkStackProps = {
             ...ecrStackProps,
