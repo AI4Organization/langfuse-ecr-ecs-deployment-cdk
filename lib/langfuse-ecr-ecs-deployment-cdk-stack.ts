@@ -11,6 +11,16 @@ import { LangfusePostgresStackProps } from './LangfusePostgresStackProps';
 import { CdkPostgreSQLDeploymentStack } from './langfuse-postgres-deployment-cdk-stack';
 import { CdkAppRunnerWithVpcDeploymentStack } from './langfuse-ecr-apprunner-deployment-cdk-stack';
 
+/**
+ * Represents a CDK stack for deploying Langfuse ECR and ECS resources.
+ *
+ * This stack is responsible for setting up the necessary AWS resources for
+ * storing Docker images in ECR and running them within ECS. It includes
+ * the creation of an ECR repository, a VPC, a PostgreSQL database, and
+ * the deployment of the application using AWS App Runner.
+ *
+ * @extends cdk.Stack
+ */
 export class CdkLangfuseEcrEcsDeploymentStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props: LangfuseBaseStackProps) {
         super(scope, id, props);
