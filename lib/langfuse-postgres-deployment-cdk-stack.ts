@@ -24,7 +24,7 @@ export class CdkPostgreSQLDeploymentStack extends cdk.NestedStack {
             description: "Ingress for PostgreSQL database access.",
         });
 
-        const databasePort = props.databasePort;
+        const databasePort = parseInt(props.databaseArgs.DB_PORT);
         dbServerSG.addIngressRule(
             ec2.Peer.ipv4(langfuseVpc.vpcCidrBlock),
             ec2.Port.tcp(databasePort),
