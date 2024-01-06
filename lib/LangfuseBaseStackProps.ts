@@ -1,4 +1,5 @@
 import * as cdk from 'aws-cdk-lib';
+import { IEnvTypes } from '../process-env-typed';
 
 export interface LangfuseBaseStackProps extends cdk.StackProps {
     /**
@@ -9,4 +10,6 @@ export interface LangfuseBaseStackProps extends cdk.StackProps {
      * The AWS region where the deployment will occur. This is optional and can be undefined.
      */
     readonly deployRegion: string | undefined;
+
+    readonly envTyped: IEnvTypes;
 }

@@ -15,15 +15,7 @@ export class CdkLangfuseEcrEcsDeploymentStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props: LangfuseBaseStackProps) {
         super(scope, id, props);
 
-        // check general stack props
-        checkEnvVariables('ECR_REPOSITORY_NAME', 'APP_NAME', 'IMAGE_VERSION', 'PORT');
-
-        const envTyped: IEnvTypes = {
-            ECR_REPOSITORY_NAME: process.env.ECR_REPOSITORY_NAME!,
-            APP_NAME: process.env.APP_NAME!,
-            IMAGE_VERSION: process.env.IMAGE_VERSION!,
-            PORT: process.env.PORT!,
-        };
+        const envTyped: IEnvTypes = props.envTyped;
 
         const ecrStackProps: LangfuseDockerImageEcrDeploymentCdkStackProps = {
             repositoryName: envTyped.ECR_REPOSITORY_NAME,
