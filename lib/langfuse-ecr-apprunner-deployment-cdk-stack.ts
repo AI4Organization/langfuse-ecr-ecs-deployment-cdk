@@ -2,16 +2,14 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as apprunner from '@aws-cdk/aws-apprunner-alpha';
-import * as ecr from 'aws-cdk-lib/aws-ecr';
 import { Cpu, Memory } from '@aws-cdk/aws-apprunner-alpha';
 import { LangfuseDockerImageEcsDeploymentCdkStackProps } from './LangfuseDockerImageEcsDeploymentCdkStackProps';
-import { createVPC } from './langfuse-vpc-deployment';
 
 export class CdkAppRunnerWithVpcDeploymentStack extends cdk.NestedStack {
   constructor(scope: Construct, id: string, props: LangfuseDockerImageEcsDeploymentCdkStackProps) {
     super(scope, id, props);
 
-    const langfuseVpc = createVPC(this, props);
+    const langfuseVpc = props.vpc;
 
     const httpSG = new ec2.SecurityGroup(this, `${props.appName}-${props.environment}-${props.platformString}-HttpSG`, {
       vpc: langfuseVpc,
