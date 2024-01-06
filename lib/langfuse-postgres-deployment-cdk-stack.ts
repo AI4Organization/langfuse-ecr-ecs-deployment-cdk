@@ -12,20 +12,21 @@ import { LangfusePostgresStackProps } from './LangfusePostgresStackProps';
  */
 export class CdkPostgreSQLDeploymentStack extends cdk.NestedStack {
     public DATABASE_URL: string;
+    public dbServerSG: cdk.aws_ec2.SecurityGroup;
 
     constructor(scope: Construct, id: string, props: LangfusePostgresStackProps) {
         super(scope, id, props);
         const langfuseVpc = props.vpc;
 
         // database security group
-        const dbServerSG = new ec2.SecurityGroup(this, `${props.appName}-${props.environment}-rds-sg`, {
+        this.dbServerSG = new ec2.SecurityGroup(this, `${props.appName}-${props.environment}-rds-sg`, {
             vpc: langfuseVpc,
             allowAllOutbound: true,
             description: "Ingress for PostgreSQL database access.",
         });
 
         const databasePort = parseInt(props.databaseArgs.DB_PORT);
-        dbServerSG.addIngressRule(
+        this.dbServerSG.addIngressRule(
             ec2.Peer.ipv4(langfuseVpc.vpcCidrBlock),
             ec2.Port.tcp(databasePort),
             "Allow database access from within VPC."
@@ -69,7 +70,7 @@ export class CdkPostgreSQLDeploymentStack extends cdk.NestedStack {
                 },
                 autoMinorVersionUpgrade: false,
                 allowMajorVersionUpgrade: false,
-                securityGroups: [dbServerSG],
+                securityGroups: [this.dbServerSG],
                 multiAz: true,
                 backupRetention: cdk.Duration.days(5),
                 removalPolicy: cdk.RemovalPolicy.DESTROY,
