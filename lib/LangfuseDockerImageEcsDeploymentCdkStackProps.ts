@@ -26,6 +26,5 @@ export interface LangfuseDockerImageEcsDeploymentCdkStackProps extends LangfuseD
     /**
      * The ECR repository where the Docker images will be stored.
      */
-
     readonly ecrRepository: cdk.aws_ecr.Repository
 }
