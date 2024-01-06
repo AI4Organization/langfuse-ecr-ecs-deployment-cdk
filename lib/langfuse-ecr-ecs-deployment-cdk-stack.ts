@@ -6,10 +6,10 @@ import { IEnvTypes } from '../process-env-typed';
 import { LangfuseBaseStackProps } from './LangfuseBaseStackProps';
 import { LangfuseVpcDeploymentCdkStack } from './langfuse-vpc-deployment-cdk-stack';
 import { LangfuseDockerImageEcrDeploymentCdkStackProps } from './LangfuseDockerImageEcrDeploymentCdkStackProps';
-import { LangfuseDockerImageEcsDeploymentCdkStackProps } from './LangfuseDockerImageEcsDeploymentCdkStackProps';
 import { LangfusePostgresStackProps } from './LangfusePostgresStackProps';
 import { CdkPostgreSQLDeploymentStack } from './langfuse-postgres-deployment-cdk-stack';
 import { CdkAppRunnerWithVpcDeploymentStack } from './langfuse-ecr-apprunner-deployment-cdk-stack';
+import { CdkAppRunnerWithVpcDeploymentStackProps } from './LangfuseAppRunnerWithVpcDeploymentStackProps';
 
 /**
  * Represents a CDK stack for deploying Langfuse ECR and ECS resources.
@@ -68,7 +68,7 @@ export class CdkLangfuseEcrEcsDeploymentStack extends cdk.Stack {
         // check docker env variables
         checkEnvVariables('NODE_ENV', 'NEXTAUTH_SECRET', 'SALT', 'TELEMETRY_ENABLED', 'NEXTAUTH_URL', 'NEXT_PUBLIC_SIGN_UP_DISABLED', 'LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES');
 
-        const appRunnerStackProps: LangfuseDockerImageEcsDeploymentCdkStackProps = {
+        const appRunnerStackProps: CdkAppRunnerWithVpcDeploymentStackProps = {
             ...ecrStackProps,
             ...postgresStackProps,
             containerPort: parseInt(envTyped.PORT),
@@ -80,10 +80,11 @@ export class CdkLangfuseEcrEcsDeploymentStack extends cdk.Stack {
                 NEXTAUTH_URL: process.env.NEXTAUTH_URL!,
                 NEXT_PUBLIC_SIGN_UP_DISABLED: process.env.NEXT_PUBLIC_SIGN_UP_DISABLED!, // todo change to boolean
                 LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES: process.env.LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES!, // todo change to boolean
+                // DATABASE_URL: postgresStack.DATABASE_URL, // TODO test with free postgres via https://www.elephantsql.com/
+                DATABASE_URL: `postgres://zuoznelq:GGMIjVd0kyqG5K9uZMR21ya_qz7X3kX9@pom.db.elephantsql.com/zuoznelq`,
             },
             ecrRepository: ecrStack.ecrRepository,
-            // DATABASE_URL: postgresStack.DATABASE_URL, // TODO test with free postgres via https://www.elephantsql.com/
-            DATABASE_URL: `postgres://zuoznelq:GGMIjVd0kyqG5K9uZMR21ya_qz7X3kX9@pom.db.elephantsql.com/zuoznelq`,
+            dbServerSG: postgresStack.dbServerSG,
         };
 
         new CdkAppRunnerWithVpcDeploymentStack(this, `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkAppRunnerWithVpcDeploymentStack`, {

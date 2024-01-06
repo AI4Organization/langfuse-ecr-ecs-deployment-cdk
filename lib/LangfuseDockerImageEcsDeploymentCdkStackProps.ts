@@ -24,9 +24,4 @@ export interface LangfuseDockerImageEcsDeploymentCdkStackProps extends LangfuseD
      * The VPC where the ECS services and other resources will be deployed.
      */
     readonly vpc: ec2.Vpc;
-    /**
-     * The URL of the database to be used by the application, typically
-     * provided in the format: postgresql://username:password@host:port/database
-     */
-    readonly DATABASE_URL: string;
 }

@@ -40,6 +40,11 @@ export interface DockerEnvTyped {
      */
     readonly NEXTAUTH_URL: string;
     /**
+     * The URL of the database to be used by the application, typically
+     * provided in the format: postgresql://username:password@host:port/database
+     */
+    readonly DATABASE_URL: string;
+    /**
      * Flag to enable or disable telemetry.
      */
     readonly TELEMETRY_ENABLED: string;
