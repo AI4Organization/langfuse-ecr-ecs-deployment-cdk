@@ -18,6 +18,13 @@ export class LangfuseVpcDeploymentCdkStack extends cdk.NestedStack {
     constructor(scope: Construct, id: string, props: LangfuseDockerImageEcrDeploymentCdkStackProps) {
         super(scope, id, props);
         this.vpc = createVPC(this, props);
+
+        // print out vpc id
+        new cdk.CfnOutput(this, `${props.appName}-${props.environment}-${props.deployRegion}-vpc-id`, {
+            value: this.vpc.vpcId,
+            exportName: `${props.appName}-${props.environment}-${props.deployRegion}-vpc-id`,
+            description: "VPC ID",
+        });
     }
 }
 

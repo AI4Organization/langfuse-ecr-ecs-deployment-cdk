@@ -3,4 +3,5 @@ import { LangfuseDockerImageEcsDeploymentCdkStackProps } from "./LangfuseDockerI
 
 export interface CdkAppRunnerWithVpcDeploymentStackProps extends LangfuseDockerImageEcsDeploymentCdkStackProps{
     readonly dbServerSG: cdk.aws_ec2.SecurityGroup;
+    readonly vpcId: string;
 }

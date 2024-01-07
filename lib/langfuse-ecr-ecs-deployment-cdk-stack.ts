@@ -10,6 +10,8 @@ import { LangfusePostgresStackProps } from './LangfusePostgresStackProps';
 import { CdkPostgreSQLDeploymentStack } from './langfuse-postgres-deployment-cdk-stack';
 import { CdkAppRunnerWithVpcDeploymentStack } from './langfuse-ecr-apprunner-deployment-cdk-stack';
 import { CdkAppRunnerWithVpcDeploymentStackProps } from './LangfuseAppRunnerWithVpcDeploymentStackProps';
+import { CdkAppRunnerWithVpcDeploymentStack2 } from './cdk-app-runner-deployment-with-vpc-stack';
+import { CdkAppRunnerWithVpcDeploymentStack3 } from './cdk-app-runner-deployment-with-vpc-stack3';
 
 /**
  * Represents a CDK stack for deploying Langfuse ECR and ECS resources.
@@ -33,7 +35,6 @@ export class CdkLangfuseEcrEcsDeploymentStack extends cdk.Stack {
             imageVersion: envTyped.IMAGE_VERSION,
             environment: props.environment,
             deployRegion: props.deployRegion,
-            stackName: `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-LangfuseEcrDeploymentCdkStack`,
         };
 
         const ecrStack = new LangfuseEcrDeploymentCdkStack(this, `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-LangfuseEcrDeploymentCdkStack`, {
@@ -48,6 +49,7 @@ export class CdkLangfuseEcrEcsDeploymentStack extends cdk.Stack {
             description: `Langfuse VPC deployment stack for ${props.environment} environment in ${props.deployRegion} region.`,
         });
 
+        checkEnvVariables('POSTGRES_USER', 'POSTGRES_PASSWORD', 'POSTGRES_DB', 'DB_PORT');
         const postgresStackProps: LangfusePostgresStackProps = {
             ...ecrStackProps,
             vpc: vpcStack.vpc,
@@ -71,6 +73,7 @@ export class CdkLangfuseEcrEcsDeploymentStack extends cdk.Stack {
         const appRunnerStackProps: CdkAppRunnerWithVpcDeploymentStackProps = {
             ...ecrStackProps,
             ...postgresStackProps,
+            vpcId: vpcStack.vpc.vpcId,
             containerPort: parseInt(envTyped.PORT),
             dockerRunArgs: {
                 NODE_ENV: process.env.NODE_ENV!,
@@ -87,10 +90,22 @@ export class CdkLangfuseEcrEcsDeploymentStack extends cdk.Stack {
             dbServerSG: postgresStack.dbServerSG,
         };
 
-        new CdkAppRunnerWithVpcDeploymentStack(this, `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkAppRunnerWithVpcDeploymentStack`, {
+        // new CdkAppRunnerWithVpcDeploymentStack(this, `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkAppRunnerWithVpcDeploymentStack`, {
+        //     ...appRunnerStackProps,
+        //     stackName: `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkAppRunnerWithVpcDeploymentStack`,
+        //     description: `Langfuse App Runner deployment stack for ${props.environment} environment in ${props.deployRegion} region.`,
+        // });
+
+        new CdkAppRunnerWithVpcDeploymentStack2(this, `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkAppRunnerWithVpcDeploymentStack2`, {
             ...appRunnerStackProps,
-            stackName: `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkAppRunnerWithVpcDeploymentStack`,
+            stackName: `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkAppRunnerWithVpcDeploymentStack2`,
             description: `Langfuse App Runner deployment stack for ${props.environment} environment in ${props.deployRegion} region.`,
         });
+
+        // new CdkAppRunnerWithVpcDeploymentStack3(this, `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkAppRunnerWithVpcDeploymentStack3`, {
+        //     ...appRunnerStackProps,
+        //     stackName: `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkAppRunnerWithVpcDeploymentStack3`,
+        //     description: `Langfuse App Runner deployment stack for ${props.environment} environment in ${props.deployRegion} region.`,
+        // });
     }
 }

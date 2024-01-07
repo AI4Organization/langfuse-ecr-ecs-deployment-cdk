@@ -6,6 +6,7 @@ import * as dotenv from 'dotenv';
 import { CdkLangfuseEcrEcsDeploymentStack } from '../lib/langfuse-ecr-ecs-deployment-cdk-stack';
 import { checkEnvVariables } from '../utils/check-environment-variable';
 import { IEnvTypes } from '../process-env-typed';
+import { CdkLangfuseEcrEcsDeploymentStack2 } from '../lib/langfuse-ecr-ecs-deployment-cdk-stack2';
 
 dotenv.config(); // Load environment variables from .env file
 const app = new cdk.App();
@@ -29,7 +30,25 @@ const envTyped: IEnvTypes = {
 
 for (const cdkRegion of cdkRegions) {
   for (const environment of deployEnvironments) {
-    new CdkLangfuseEcrEcsDeploymentStack(app, `${envTyped.APP_NAME}-${environment}-${cdkRegion}-CdkLangfuseEcrEcsDeploymentStack`, {
+    // new CdkLangfuseEcrEcsDeploymentStack(app, `${envTyped.APP_NAME}-${environment}-${cdkRegion}-CdkLangfuseEcrEcsDeploymentStack`, {
+    //   env: {
+    //     account,
+    //     region: cdkRegion,
+    //   },
+    //   tags: {
+    //     environment,
+    //     appName: envTyped.APP_NAME,
+    //     AppManagerCFNStackKey: 'true',
+    //   },
+    //   deployRegion: cdkRegion,
+    //   environment,
+    //   envTyped,
+    //   appName: envTyped.APP_NAME,
+    //   stackName: `${envTyped.APP_NAME}-${environment}-${cdkRegion}-CdkLangfuseEcrEcsDeploymentStack`,
+    //   description: `Langfuse ECR/ECS deployment stack for ${environment} environment in ${cdkRegion} region.`,
+    // });
+
+    new CdkLangfuseEcrEcsDeploymentStack2(app, `${envTyped.APP_NAME}-${environment}-${cdkRegion}-CdkLangfuseEcrEcsDeploymentStack2`, {
       env: {
         account,
         region: cdkRegion,
@@ -42,7 +61,8 @@ for (const cdkRegion of cdkRegions) {
       deployRegion: cdkRegion,
       environment,
       envTyped,
-      stackName: `${envTyped.APP_NAME}-${environment}-${cdkRegion}-CdkLangfuseEcrEcsDeploymentStack`,
+      appName: envTyped.APP_NAME,
+      stackName: `${envTyped.APP_NAME}-${environment}-${cdkRegion}-CdkLangfuseEcrEcsDeploymentStack2`,
       description: `Langfuse ECR/ECS deployment stack for ${environment} environment in ${cdkRegion} region.`,
     });
   }

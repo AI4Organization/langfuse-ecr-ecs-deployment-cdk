@@ -13,10 +13,6 @@ export interface LangfuseDockerImageEcsDeploymentCdkStackProps extends LangfuseD
      */
     readonly dockerRunArgs: DockerEnvTyped,
     /**
-     * The database environment variables and arguments.
-     */
-    readonly databaseArgs: DatabaseEnvTyped;
-    /**
      * The ECR repository where the Docker images will be stored.
      */
     readonly ecrRepository: cdk.aws_ecr.Repository;

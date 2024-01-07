@@ -10,10 +10,6 @@ export interface LangfuseDockerImageEcrDeploymentCdkStackProps extends Omit<Lang
    */
   readonly repositoryName: string;
   /**
-   * The name of the application associated with the deployment.
-   */
-  readonly appName: string;
-  /**
    * The version tag for the Docker image to be deployed.
    */
   readonly imageVersion: string;
