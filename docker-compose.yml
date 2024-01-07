@@ -1,0 +1,16 @@
+version: '3.5'
+
+services:
+  langfuse-server:
+    image: ghcr.io/langfuse/langfuse:latest
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgres://postgres:postgres@your_host_postgres_name/postgres
+      - NEXTAUTH_SECRET=vvEwPrM54n84TD9
+      - SALT=VG5EYNsmP1ujx8zWa88IAmuONHWN
+      - NEXTAUTH_URL=http://localhost:3000
+      - TELEMETRY_ENABLED=${TELEMETRY_ENABLED:-true}
+      - NEXT_PUBLIC_SIGN_UP_DISABLED=${NEXT_PUBLIC_SIGN_UP_DISABLED:-false}
+      - LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES=${LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES:-true}
