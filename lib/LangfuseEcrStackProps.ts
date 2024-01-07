@@ -13,8 +13,4 @@ export interface LangfuseEcrStackProps extends LangfuseBaseStackProps {
    * The version tag for the Docker image to be deployed.
    */
   readonly imageVersion: string;
-  /**
-   * The platform string indicating the CPU architecture, e.g., 'arm' or 'x86_64'.
-   */
-  readonly platformString?: string | undefined;
 }

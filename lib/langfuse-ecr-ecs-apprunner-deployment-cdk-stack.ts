@@ -38,6 +38,7 @@ export class CdkLangfuseEcrEcsAppRunnerDeploymentStack extends cdk.Stack {
             imageVersion: envTyped.IMAGE_VERSION,
             environment: props.environment,
             deployRegion: props.deployRegion,
+            platformString: props.platformString,
         };
 
         const ecrStack = new LangfuseEcrDeploymentCdkStack(this, `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-LangfuseEcrDeploymentCdkStack`, {
