@@ -29,7 +29,7 @@ for (const cdkRegion of cdkRegions) {
   for (const environment of deployEnvironments) {
     for (const platform of platforms) {
       const platformString = platform === Platform.LINUX_AMD64 ? 'amd64' : 'arm';
-      new CdkLangfuseEcrEcsFargateDeploymentStack(app, `${appName}-${environment}-${cdkRegion}-CdkLangfuseEcrEcsDeploymentStack`, {
+      new CdkLangfuseEcrEcsFargateDeploymentStack(app, `${appName}-${environment}-${cdkRegion}-CdkLangfuseEcrEcsFargateDeploymentStack`, {
         env: {
           account,
           region: cdkRegion,
@@ -43,8 +43,8 @@ for (const cdkRegion of cdkRegions) {
         environment,
         platformString,
         appName,
-        stackName: `${appName}-${environment}-${cdkRegion}-CdkLangfuseEcrEcsDeploymentStack`,
-        description: `Langfuse ECR/ECS deployment stack for ${environment} environment in ${cdkRegion} region.`,
+        stackName: `${appName}-${environment}-${cdkRegion}-CdkLangfuseEcrEcsFargateDeploymentStack`,
+        description: `Langfuse ECR/ECS with Fargate deployment stack for ${environment} environment in ${cdkRegion} region.`,
       });
     }
   }
