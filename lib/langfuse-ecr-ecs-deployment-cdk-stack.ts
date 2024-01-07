@@ -12,6 +12,7 @@ import { CdkAppRunnerWithVpcDeploymentStack } from './langfuse-ecr-apprunner-dep
 import { CdkAppRunnerWithVpcDeploymentStackProps } from './LangfuseAppRunnerWithVpcDeploymentStackProps';
 import { CdkAppRunnerWithVpcDeploymentStack2 } from './cdk-app-runner-deployment-with-vpc-stack';
 import { CdkAppRunnerWithVpcDeploymentStack3 } from './cdk-app-runner-deployment-with-vpc-stack3';
+import { CdkFargateWithVpcDeploymentStack } from './cdk-fargate-deployment-with-vpc-stack';
 
 /**
  * Represents a CDK stack for deploying Langfuse ECR and ECS resources.
@@ -79,12 +80,11 @@ export class CdkLangfuseEcrEcsDeploymentStack extends cdk.Stack {
                 NODE_ENV: process.env.NODE_ENV!,
                 NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET!,
                 SALT: process.env.SALT!,
-                TELEMETRY_ENABLED: process.env.TELEMETRY_ENABLED!, // todo change to boolean
+                TELEMETRY_ENABLED: process.env.TELEMETRY_ENABLED!,
                 NEXTAUTH_URL: process.env.NEXTAUTH_URL!,
-                NEXT_PUBLIC_SIGN_UP_DISABLED: process.env.NEXT_PUBLIC_SIGN_UP_DISABLED!, // todo change to boolean
-                LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES: process.env.LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES!, // todo change to boolean
-                // DATABASE_URL: postgresStack.DATABASE_URL, // TODO test with free postgres via https://www.elephantsql.com/
-                DATABASE_URL: `postgres://zuoznelq:GGMIjVd0kyqG5K9uZMR21ya_qz7X3kX9@pom.db.elephantsql.com/zuoznelq`,
+                NEXT_PUBLIC_SIGN_UP_DISABLED: process.env.NEXT_PUBLIC_SIGN_UP_DISABLED!,
+                LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES: process.env.LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES!,
+                DATABASE_URL: postgresStack.DATABASE_URL,
             },
             ecrRepository: ecrStack.ecrRepository,
             dbServerSG: postgresStack.dbServerSG,
@@ -96,7 +96,13 @@ export class CdkLangfuseEcrEcsDeploymentStack extends cdk.Stack {
         //     description: `Langfuse App Runner deployment stack for ${props.environment} environment in ${props.deployRegion} region.`,
         // });
 
-        new CdkAppRunnerWithVpcDeploymentStack2(this, `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkAppRunnerWithVpcDeploymentStack2`, {
+        // new CdkAppRunnerWithVpcDeploymentStack2(this, `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkAppRunnerWithVpcDeploymentStack2`, {
+        //     ...appRunnerStackProps,
+        //     stackName: `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkAppRunnerWithVpcDeploymentStack2`,
+        //     description: `Langfuse App Runner deployment stack for ${props.environment} environment in ${props.deployRegion} region.`,
+        // });
+
+        new CdkFargateWithVpcDeploymentStack(this, `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkAppRunnerWithVpcDeploymentStack2`, {
             ...appRunnerStackProps,
             stackName: `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkAppRunnerWithVpcDeploymentStack2`,
             description: `Langfuse App Runner deployment stack for ${props.environment} environment in ${props.deployRegion} region.`,

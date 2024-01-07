@@ -16,43 +16,43 @@ export class CdkAppRunnerWithVpcDeploymentStack3 extends cdk.NestedStack {
         console.log(`containerPort: ${containerPort}`);
 
         // define apprunner role to access ecr
-        const appRunnerRole = new iam.Role(
-            this,
-            `${props.appName}-${props.environment}-apprunner-role`,
-            {
-                assumedBy: new iam.ServicePrincipal("build.apprunner.amazonaws.com"),
-                description: `${props.appName}-${props.environment}-apprunner-role`,
-                inlinePolicies: {
-                    apprunnerpolicy: new iam.PolicyDocument({
-                        statements: [
-                            new iam.PolicyStatement({
-                                effect: iam.Effect.ALLOW,
-                                actions: ["ecr:GetAuthorizationToken"],
-                                resources: ["*"],
-                            }),
-                            new iam.PolicyStatement({
-                                effect: iam.Effect.ALLOW,
-                                actions: [
-                                    "ecr:BatchCheckLayerAvailability",
-                                    "ecr:GetDownloadUrlForLayer",
-                                    "ecr:GetRepositoryPolicy",
-                                    "ecr:DescribeRepositories",
-                                    "ecr:ListImages",
-                                    "ecr:DescribeImages",
-                                    "ecr:BatchGetImage",
-                                    "ecr:GetLifecyclePolicy",
-                                    "ecr:GetLifecyclePolicyPreview",
-                                    "ecr:ListTagsForResource",
-                                    "ecr:DescribeImageScanFindings",
-                                ],
-                                resources: [props.ecrRepository.repositoryArn],
-                            }),
-                        ],
-                    }),
-                },
-                roleName: `${props.appName}-${props.environment}-apprunner-role`,
-            }
-        );
+        // const appRunnerRole = new iam.Role(
+        //     this,
+        //     `${props.appName}-${props.environment}-apprunner-role`,
+        //     {
+        //         assumedBy: new iam.ServicePrincipal("build.apprunner.amazonaws.com"),
+        //         description: `${props.appName}-${props.environment}-apprunner-role`,
+        //         inlinePolicies: {
+        //             apprunnerpolicy: new iam.PolicyDocument({
+        //                 statements: [
+        //                     new iam.PolicyStatement({
+        //                         effect: iam.Effect.ALLOW,
+        //                         actions: ["ecr:GetAuthorizationToken"],
+        //                         resources: ["*"],
+        //                     }),
+        //                     new iam.PolicyStatement({
+        //                         effect: iam.Effect.ALLOW,
+        //                         actions: [
+        //                             "ecr:BatchCheckLayerAvailability",
+        //                             "ecr:GetDownloadUrlForLayer",
+        //                             "ecr:GetRepositoryPolicy",
+        //                             "ecr:DescribeRepositories",
+        //                             "ecr:ListImages",
+        //                             "ecr:DescribeImages",
+        //                             "ecr:BatchGetImage",
+        //                             "ecr:GetLifecyclePolicy",
+        //                             "ecr:GetLifecyclePolicyPreview",
+        //                             "ecr:ListTagsForResource",
+        //                             "ecr:DescribeImageScanFindings",
+        //                         ],
+        //                         resources: [props.ecrRepository.repositoryArn],
+        //                     }),
+        //                 ],
+        //             }),
+        //         },
+        //         roleName: `${props.appName}-${props.environment}-apprunner-role`,
+        //     }
+        // );
 
         const apprunnerService = new apprunner.Service(this, `${props.appName}-${props.environment}-AppRunner-Service`, {
             cpu: Cpu.ONE_VCPU,
@@ -68,7 +68,7 @@ export class CdkAppRunnerWithVpcDeploymentStack3 extends cdk.NestedStack {
                     },
                 },
             }),
-            accessRole: appRunnerRole,
+            // accessRole: appRunnerRole,
         });
 
         // print out apprunnerService url

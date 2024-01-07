@@ -30,25 +30,7 @@ const envTyped: IEnvTypes = {
 
 for (const cdkRegion of cdkRegions) {
   for (const environment of deployEnvironments) {
-    // new CdkLangfuseEcrEcsDeploymentStack(app, `${envTyped.APP_NAME}-${environment}-${cdkRegion}-CdkLangfuseEcrEcsDeploymentStack`, {
-    //   env: {
-    //     account,
-    //     region: cdkRegion,
-    //   },
-    //   tags: {
-    //     environment,
-    //     appName: envTyped.APP_NAME,
-    //     AppManagerCFNStackKey: 'true',
-    //   },
-    //   deployRegion: cdkRegion,
-    //   environment,
-    //   envTyped,
-    //   appName: envTyped.APP_NAME,
-    //   stackName: `${envTyped.APP_NAME}-${environment}-${cdkRegion}-CdkLangfuseEcrEcsDeploymentStack`,
-    //   description: `Langfuse ECR/ECS deployment stack for ${environment} environment in ${cdkRegion} region.`,
-    // });
-
-    new CdkLangfuseEcrEcsDeploymentStack2(app, `${envTyped.APP_NAME}-${environment}-${cdkRegion}-CdkLangfuseEcrEcsDeploymentStack2`, {
+    new CdkLangfuseEcrEcsDeploymentStack(app, `${envTyped.APP_NAME}-${environment}-${cdkRegion}-CdkLangfuseEcrEcsDeploymentStack`, {
       env: {
         account,
         region: cdkRegion,
@@ -62,8 +44,26 @@ for (const cdkRegion of cdkRegions) {
       environment,
       envTyped,
       appName: envTyped.APP_NAME,
-      stackName: `${envTyped.APP_NAME}-${environment}-${cdkRegion}-CdkLangfuseEcrEcsDeploymentStack2`,
+      stackName: `${envTyped.APP_NAME}-${environment}-${cdkRegion}-CdkLangfuseEcrEcsDeploymentStack`,
       description: `Langfuse ECR/ECS deployment stack for ${environment} environment in ${cdkRegion} region.`,
     });
+
+    // new CdkLangfuseEcrEcsDeploymentStack2(app, `${envTyped.APP_NAME}-${environment}-${cdkRegion}-CdkLangfuseEcrEcsDeploymentStack2`, {
+    //   env: {
+    //     account,
+    //     region: cdkRegion,
+    //   },
+    //   tags: {
+    //     environment,
+    //     appName: envTyped.APP_NAME,
+    //     AppManagerCFNStackKey: 'true',
+    //   },
+    //   deployRegion: cdkRegion,
+    //   environment,
+    //   envTyped,
+    //   appName: envTyped.APP_NAME,
+    //   stackName: `${envTyped.APP_NAME}-${environment}-${cdkRegion}-CdkLangfuseEcrEcsDeploymentStack2`,
+    //   description: `Langfuse ECR/ECS deployment stack for ${environment} environment in ${cdkRegion} region.`,
+    // });
   }
 }
