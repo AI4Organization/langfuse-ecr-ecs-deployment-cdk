@@ -32,6 +32,10 @@ The deployment configuration relies on environment variables defined in a `.env`
 
 ## Usage
 
+![Login](assets/signin.png "Login with Email and Password")
+![Sign Up](assets/signup.png "Sign Up with Username, Email, and Password")
+![Dashboard](assets/dashboard.png "Application Dashboard")
+
 To use this repository, ensure that you have AWS CDK installed and configured with appropriate AWS credentials. Clone the repository, install dependencies, and run the deployment scripts as needed.
 
 ## Scripts

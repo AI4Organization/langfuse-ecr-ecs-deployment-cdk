@@ -7,7 +7,7 @@ services:
       - '3000:3000'
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=postgres://zuoznelq:GGMIjVd0kyqG5K9uZMR21ya_qz7X3kX9@pom.db.elephantsql.com/zuoznelq
+      - DATABASE_URL=postgres://postgres:postgres@your_host_postgres_name/postgres
       - NEXTAUTH_SECRET=vvEwPrM54n84TD9
       - SALT=VG5EYNsmP1ujx8zWa88IAmuONHWN
       - NEXTAUTH_URL=http://localhost:3000
