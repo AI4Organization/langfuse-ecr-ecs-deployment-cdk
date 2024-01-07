@@ -20,16 +20,16 @@ export class CdkAppRunnerWithVpcDeploymentStack extends cdk.NestedStack {
 
     const langfuseVpc = props.vpc;
 
-    const vpcConnector = new apprunner.VpcConnector(this, `${props.appName}-${props.environment}-VpcConnector`, {
+    const vpcConnector = new apprunner.VpcConnector(this, `${props.appName}-${props.environment}-${props.platformString}-VpcConnector`, {
       vpc: langfuseVpc,
       vpcSubnets: langfuseVpc.selectSubnets({ subnetType: ec2.SubnetType.PRIVATE_ISOLATED }),
-      securityGroups: [props.dbServerSG],
+      // securityGroups: [props.dbServerSG],
     });
 
     // define apprunner role to access ecr
     const appRunnerRole = new iam.Role(
       this,
-      `${props.appName}-${props.environment}-apprunner-role`,
+      `${props.appName}-${props.environment}-${props.platformString}-apprunner-role`,
       {
         assumedBy: new iam.ServicePrincipal("build.apprunner.amazonaws.com"),
         description: `${props.appName}-${props.environment}-apprunner-role`,
@@ -61,7 +61,7 @@ export class CdkAppRunnerWithVpcDeploymentStack extends cdk.NestedStack {
             ],
           }),
         },
-        roleName: `${props.appName}-${props.environment}-apprunner-role`,
+        roleName: `${props.appName}-${props.environment}-${props.platformString}-apprunner-role`,
       }
     );
 
@@ -70,7 +70,7 @@ export class CdkAppRunnerWithVpcDeploymentStack extends cdk.NestedStack {
 
     const containerPort = props.containerPort;
     console.log(`containerPort: ${containerPort}`);
-    const apprunnerService = new apprunner.Service(this, `${props.appName}-${props.environment}-AppRunner-Service`, {
+    const apprunnerService = new apprunner.Service(this, `${props.appName}-${props.environment}-${props.platformString}-AppRunner-Service`, {
       cpu: Cpu.ONE_VCPU,
       memory: Memory.TWO_GB,
       autoDeploymentsEnabled: true,
@@ -89,9 +89,9 @@ export class CdkAppRunnerWithVpcDeploymentStack extends cdk.NestedStack {
     });
 
     // print out apprunnerService url
-    new cdk.CfnOutput(this, `${props.appName}-${props.environment}-AppRunner-Service-Url-With-Vpc`, {
+    new cdk.CfnOutput(this, `${props.appName}-${props.environment}-${props.platformString}-AppRunner-Service-Url-With-Vpc`, {
       value: `https://${apprunnerService.serviceUrl}`,
-      exportName: `${props.appName}-${props.environment}-AppRunner-Service-Url-With-Vpc`,
+      exportName: `${props.appName}-${props.environment}-${props.platformString}-AppRunner-Service-Url-With-Vpc`,
     });
   }
 }

@@ -11,7 +11,7 @@ export class CdkFargateWithVpcDeploymentStack extends cdk.NestedStack {
         super(scope, id, props);
 
         const existingVpc = props.vpc;
-        const httpSG = new ec2.SecurityGroup(this, `${props.appName}-${props.environment}-HttpSG`, {
+        const httpSG = new ec2.SecurityGroup(this, `${props.appName}-${props.environment}-${props.platformString}-HttpSG`, {
             vpc: existingVpc,
             allowAllOutbound: true,
         });
@@ -21,7 +21,7 @@ export class CdkFargateWithVpcDeploymentStack extends cdk.NestedStack {
             ec2.Port.tcp(80)
         );
 
-        const httpsSG = new ec2.SecurityGroup(this, `${props.appName}-${props.environment}-HttpsSG`, {
+        const httpsSG = new ec2.SecurityGroup(this, `${props.appName}-${props.environment}-${props.platformString}-HttpsSG`, {
             vpc: existingVpc,
             allowAllOutbound: true,
         });
@@ -54,14 +54,14 @@ export class CdkFargateWithVpcDeploymentStack extends cdk.NestedStack {
         // create a task definition with CloudWatch Logs
         const logDriver = new ecs.AwsLogDriver({ streamPrefix: `${props.appName}-${props.environment}-${props.platformString}` });
 
-        // const certificate = new Certificate(this, `${props.appName}-${props.environment}-Certificate`, {
+        // const certificate = new Certificate(this, `${props.appName}-${props.environment}-${props.platformString}-Certificate`, {
         //     domainName: 'example.com',
         //     subjectAlternativeNames: ['*.example.com'],
         //     validation: CertificateValidation.fromDns(),
         // });
 
         // Instantiate Fargate Service with just cluster and image
-        const fargateService = new ecs_patterns.ApplicationLoadBalancedFargateService(this, "FargateService", {
+        const fargateService = new ecs_patterns.ApplicationLoadBalancedFargateService(this, `${props.appName}-${props.environment}-${props.platformString}-FargateService`, {
             cluster,
             taskImageOptions: {
                 image: ecs.ContainerImage.fromEcrRepository(props.ecrRepository, props.imageVersion),
@@ -73,18 +73,19 @@ export class CdkFargateWithVpcDeploymentStack extends cdk.NestedStack {
                 enableLogging: true,
                 logDriver,
             },
-            securityGroups: [httpSG, httpsSG],
+            securityGroups: [httpSG, httpsSG, props.dbServerSG],
             // certificate: acm.Certificate.fromCertificateArn(this, `${props.appName}-${props.environment}-FargateServiceCertificate`, props.certificateArn),
             // certificate,
             // redirectHTTP: true,
+            // protocol: cdk.aws_elasticloadbalancingv2.ApplicationProtocol.HTTPS,
+            // protocolVersion: cdk.aws_elasticloadbalancingv2.ApplicationProtocolVersion.HTTP1,
             cpu: 1024,
             memoryLimitMiB: 2048,
             desiredCount: 1,
             publicLoadBalancer: true,
             platformVersion: ecs.FargatePlatformVersion.VERSION1_4,
             runtimePlatform: {
-                // cpuArchitecture: props.platformString === `arm` ? ecs.CpuArchitecture.ARM64 : ecs.CpuArchitecture.X86_64,
-                cpuArchitecture: ecs.CpuArchitecture.X86_64,
+                cpuArchitecture: props.platformString === `arm` ? ecs.CpuArchitecture.ARM64 : ecs.CpuArchitecture.X86_64,
                 operatingSystemFamily: ecs.OperatingSystemFamily.LINUX,
             },
         });
@@ -98,9 +99,9 @@ export class CdkFargateWithVpcDeploymentStack extends cdk.NestedStack {
         });
 
         // print out fargateService load balancer url
-        new cdk.CfnOutput(this, `${props.appName}-${props.environment}-FargateServiceLoadBalancerDNS`, {
+        new cdk.CfnOutput(this, `${props.appName}-${props.environment}-${props.platformString}-FargateServiceLoadBalancerDNS`, {
             value: fargateService.loadBalancer.loadBalancerDnsName,
-            exportName: `${props.appName}-${props.environment}-FargateServiceLoadBalancerDNS`,
+            exportName: `${props.appName}-${props.environment}-${props.platformString}-FargateServiceLoadBalancerDNS`,
         });
     }
 }

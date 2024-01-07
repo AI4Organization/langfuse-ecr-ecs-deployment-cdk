@@ -6,7 +6,6 @@ import * as dotenv from 'dotenv';
 import { Platform } from 'aws-cdk-lib/aws-ecr-assets';
 import { CdkLangfuseEcrEcsFargateDeploymentStack } from '../lib/langfuse-ecr-ecs-fargate-deployment-cdk-stack';
 import { checkEnvVariables } from '../utils/check-environment-variable';
-import { IEnvTypes } from '../process-env-typed';
 import { parsePlatforms } from '../utils/parsing-platform-variable';
 
 dotenv.config(); // Load environment variables from .env file
