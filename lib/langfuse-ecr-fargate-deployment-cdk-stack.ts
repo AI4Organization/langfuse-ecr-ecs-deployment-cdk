@@ -31,7 +31,7 @@ export class CdkFargateWithVpcDeploymentStack extends cdk.NestedStack {
         );
 
         // define a cluster with spot instances, linux type
-        const cluster = new ecs.Cluster(this, `DeploymentCluster`, {
+        const cluster = new ecs.Cluster(this, `${props.appName}-${props.environment}-DeploymentCluster`, {
             vpc: existingVpc,
             containerInsights: true,
             clusterName: `${props.appName}-${props.environment}-Cluster`,
@@ -73,7 +73,7 @@ export class CdkFargateWithVpcDeploymentStack extends cdk.NestedStack {
                 enableLogging: true,
                 logDriver,
             },
-            securityGroups: [httpSG, httpsSG, props.dbServerSG],
+            securityGroups: [httpSG, httpsSG],
             // certificate: acm.Certificate.fromCertificateArn(this, `${props.appName}-${props.environment}-FargateServiceCertificate`, props.certificateArn),
             // certificate,
             // redirectHTTP: true,
