@@ -1,21 +1,50 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
+
 import * as cdk from 'aws-cdk-lib';
-import { LangfuseEcrEcsDeploymentCdkStack } from '../lib/langfuse-ecr-ecs-deployment-cdk-stack';
+import * as dotenv from 'dotenv';
+import { Platform } from 'aws-cdk-lib/aws-ecr-assets';
+import { CdkLangfuseEcrEcsFargateDeploymentStack } from '../lib/langfuse-ecr-ecs-fargate-deployment-cdk-stack';
+import { checkEnvVariables } from '../utils/check-environment-variable';
+import { parsePlatforms } from '../utils/parsing-platform-variable';
 
+dotenv.config(); // Load environment variables from .env file
 const app = new cdk.App();
-new LangfuseEcrEcsDeploymentCdkStack(app, 'LangfuseEcrEcsDeploymentCdkStack', {
-  /* If you don't specify 'env', this stack will be environment-agnostic.
-   * Account/Region-dependent features and context lookups will not work,
-   * but a single synthesized template can be deployed anywhere. */
 
-  /* Uncomment the next line to specialize this stack for the AWS Account
-   * and Region that are implied by the current CLI configuration. */
-  // env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
+const { CDK_DEFAULT_ACCOUNT: account, CDK_DEFAULT_REGION: region } = process.env;
 
-  /* Uncomment the next line if you know exactly what Account and Region you
-   * want to deploy the stack to. */
-  // env: { account: '123456789012', region: 'us-east-1' },
+const cdkRegions = process.env.CDK_DEPLOY_REGIONS?.split(',') ?? [region]; // Parsing comma separated list of regions
+const deployEnvironments = process.env.ENVIRONMENTS?.split(',') ?? ['dev']; // Parsing comma separated list of environments
 
-  /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
-});
+export const LATEST_IMAGE_VERSION = 'latest';
+
+// check general stack props
+checkEnvVariables('ECR_REPOSITORY_NAME', 'APP_NAME', 'IMAGE_VERSION', 'PORT', 'PLATFORMS');
+
+const appName = process.env.APP_NAME!;
+const platforms = parsePlatforms(process.env.PLATFORMS!.split(','));
+
+for (const cdkRegion of cdkRegions) {
+  for (const environment of deployEnvironments) {
+    for (const platform of platforms) {
+      const platformString = platform === Platform.LINUX_AMD64 ? 'amd64' : 'arm';
+      new CdkLangfuseEcrEcsFargateDeploymentStack(app, `${appName}-${environment}-${cdkRegion}-CdkLangfuseEcrEcsFargateDeploymentStack`, {
+        env: {
+          account,
+          region: cdkRegion,
+        },
+        tags: {
+          environment,
+          appName: appName,
+          AppManagerCFNStackKey: 'true',
+        },
+        deployRegion: cdkRegion,
+        environment,
+        platformString,
+        appName,
+        stackName: `${appName}-${environment}-${cdkRegion}-CdkLangfuseEcrEcsFargateDeploymentStack`,
+        description: `Langfuse ECR/ECS with Fargate deployment stack for ${environment} environment in ${cdkRegion} region.`,
+      });
+    }
+  }
+}
