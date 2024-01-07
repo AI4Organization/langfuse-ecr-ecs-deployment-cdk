@@ -4,9 +4,7 @@ import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as apprunner from '@aws-cdk/aws-apprunner-alpha';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { Cpu, Memory } from '@aws-cdk/aws-apprunner-alpha';
-import * as path from 'path';
-import { CdkAppRunnerWithVpcDeploymentStackProps } from './LangfuseAppRunnerWithVpcDeploymentStackProps';
-import { DockerImageAsset } from 'aws-cdk-lib/aws-ecr-assets';
+import { LangfuseEcsStackProps } from './LangfuseEcsStackProps';
 
 /**
  * Represents a CDK stack for deploying an AWS App Runner service within a VPC.
@@ -17,7 +15,7 @@ import { DockerImageAsset } from 'aws-cdk-lib/aws-ecr-assets';
  * @extends {cdk.NestedStack}
  */
 export class CdkAppRunnerWithVpcDeploymentStack extends cdk.NestedStack {
-  constructor(scope: Construct, id: string, props: CdkAppRunnerWithVpcDeploymentStackProps) {
+  constructor(scope: Construct, id: string, props: LangfuseEcsStackProps) {
     super(scope, id, props);
 
     const langfuseVpc = props.vpc;
@@ -28,44 +26,44 @@ export class CdkAppRunnerWithVpcDeploymentStack extends cdk.NestedStack {
       securityGroups: [props.dbServerSG],
     });
 
-    // // define apprunner role to access ecr
-    // const appRunnerRole = new iam.Role(
-    //   this,
-    //   `${props.appName}-${props.environment}-apprunner-role`,
-    //   {
-    //     assumedBy: new iam.ServicePrincipal("build.apprunner.amazonaws.com"),
-    //     description: `${props.appName}-${props.environment}-apprunner-role`,
-    //     inlinePolicies: {
-    //       apprunnerpolicy: new iam.PolicyDocument({
-    //         statements: [
-    //           new iam.PolicyStatement({
-    //             effect: iam.Effect.ALLOW,
-    //             actions: ["ecr:GetAuthorizationToken"],
-    //             resources: ["*"],
-    //           }),
-    //           new iam.PolicyStatement({
-    //             effect: iam.Effect.ALLOW,
-    //             actions: [
-    //               "ecr:BatchCheckLayerAvailability",
-    //               "ecr:GetDownloadUrlForLayer",
-    //               "ecr:GetRepositoryPolicy",
-    //               "ecr:DescribeRepositories",
-    //               "ecr:ListImages",
-    //               "ecr:DescribeImages",
-    //               "ecr:BatchGetImage",
-    //               "ecr:GetLifecyclePolicy",
-    //               "ecr:GetLifecyclePolicyPreview",
-    //               "ecr:ListTagsForResource",
-    //               "ecr:DescribeImageScanFindings",
-    //             ],
-    //             resources: [props.ecrRepository.repositoryArn],
-    //           }),
-    //         ],
-    //       }),
-    //     },
-    //     roleName: `${props.appName}-${props.environment}-apprunner-role`,
-    //   }
-    // );
+    // define apprunner role to access ecr
+    const appRunnerRole = new iam.Role(
+      this,
+      `${props.appName}-${props.environment}-apprunner-role`,
+      {
+        assumedBy: new iam.ServicePrincipal("build.apprunner.amazonaws.com"),
+        description: `${props.appName}-${props.environment}-apprunner-role`,
+        inlinePolicies: {
+          apprunnerpolicy: new iam.PolicyDocument({
+            statements: [
+              new iam.PolicyStatement({
+                effect: iam.Effect.ALLOW,
+                actions: ["ecr:GetAuthorizationToken"],
+                resources: ["*"],
+              }),
+              new iam.PolicyStatement({
+                effect: iam.Effect.ALLOW,
+                actions: [
+                  "ecr:BatchCheckLayerAvailability",
+                  "ecr:GetDownloadUrlForLayer",
+                  "ecr:GetRepositoryPolicy",
+                  "ecr:DescribeRepositories",
+                  "ecr:ListImages",
+                  "ecr:DescribeImages",
+                  "ecr:BatchGetImage",
+                  "ecr:GetLifecyclePolicy",
+                  "ecr:GetLifecyclePolicyPreview",
+                  "ecr:ListTagsForResource",
+                  "ecr:DescribeImageScanFindings",
+                ],
+                resources: [props.ecrRepository.repositoryArn],
+              }),
+            ],
+          }),
+        },
+        roleName: `${props.appName}-${props.environment}-apprunner-role`,
+      }
+    );
 
     const imageVersion = props.imageVersion;
     console.log(`imageVersion: ${imageVersion}`);
@@ -87,7 +85,7 @@ export class CdkAppRunnerWithVpcDeploymentStack extends cdk.NestedStack {
           },
         },
       }),
-      // accessRole: appRunnerRole,
+      accessRole: appRunnerRole,
     });
 
     // print out apprunnerService url
@@ -97,5 +95,3 @@ export class CdkAppRunnerWithVpcDeploymentStack extends cdk.NestedStack {
     });
   }
 }
-
-// Continue @ https://github.com/aws-samples/aws-apprunner-cdk/blob/main/cdk/lib/cdk-infra-stack.ts

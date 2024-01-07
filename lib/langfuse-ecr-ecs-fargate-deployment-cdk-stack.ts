@@ -5,14 +5,11 @@ import { LangfuseEcrDeploymentCdkStack } from './langfuse-ecr-deployment-cdk-sta
 import { IEnvTypes } from '../process-env-typed';
 import { LangfuseBaseStackProps } from './LangfuseBaseStackProps';
 import { LangfuseVpcDeploymentCdkStack } from './langfuse-vpc-deployment-cdk-stack';
-import { LangfuseDockerImageEcrDeploymentCdkStackProps } from './LangfuseDockerImageEcrDeploymentCdkStackProps';
+import { LangfuseEcrStackProps } from './LangfuseEcrStackProps';
 import { LangfusePostgresStackProps } from './LangfusePostgresStackProps';
 import { CdkPostgreSQLDeploymentStack } from './langfuse-postgres-deployment-cdk-stack';
-import { CdkAppRunnerWithVpcDeploymentStack } from './langfuse-ecr-apprunner-deployment-cdk-stack';
-import { CdkAppRunnerWithVpcDeploymentStackProps } from './LangfuseAppRunnerWithVpcDeploymentStackProps';
-import { CdkAppRunnerWithVpcDeploymentStack2 } from './cdk-app-runner-deployment-with-vpc-stack';
-import { CdkAppRunnerWithVpcDeploymentStack3 } from './cdk-app-runner-deployment-with-vpc-stack3';
-import { CdkFargateWithVpcDeploymentStack } from './cdk-fargate-deployment-with-vpc-stack';
+import { CdkFargateWithVpcDeploymentStack } from './langfuse-ecr-fargate-deployment-cdk-stack';
+import { LangfuseEcsStackProps } from './LangfuseEcsStackProps';
 
 /**
  * Represents a CDK stack for deploying Langfuse ECR and ECS resources.
@@ -24,13 +21,18 @@ import { CdkFargateWithVpcDeploymentStack } from './cdk-fargate-deployment-with-
  *
  * @extends cdk.Stack
  */
-export class CdkLangfuseEcrEcsDeploymentStack extends cdk.Stack {
+export class CdkLangfuseEcrEcsFargateDeploymentStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props: LangfuseBaseStackProps) {
         super(scope, id, props);
 
-        const envTyped: IEnvTypes = props.envTyped;
+        const envTyped: IEnvTypes = {
+            ECR_REPOSITORY_NAME: process.env.ECR_REPOSITORY_NAME!,
+            APP_NAME: process.env.APP_NAME!,
+            IMAGE_VERSION: process.env.IMAGE_VERSION!,
+            PORT: process.env.PORT!,
+        };
 
-        const ecrStackProps: LangfuseDockerImageEcrDeploymentCdkStackProps = {
+        const ecrStackProps: LangfuseEcrStackProps = {
             repositoryName: envTyped.ECR_REPOSITORY_NAME,
             appName: envTyped.APP_NAME,
             imageVersion: envTyped.IMAGE_VERSION,
@@ -71,10 +73,9 @@ export class CdkLangfuseEcrEcsDeploymentStack extends cdk.Stack {
         // check docker env variables
         checkEnvVariables('NODE_ENV', 'NEXTAUTH_SECRET', 'SALT', 'TELEMETRY_ENABLED', 'NEXTAUTH_URL', 'NEXT_PUBLIC_SIGN_UP_DISABLED', 'LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES');
 
-        const appRunnerStackProps: CdkAppRunnerWithVpcDeploymentStackProps = {
+        const ecsStackProps: LangfuseEcsStackProps = {
             ...ecrStackProps,
             ...postgresStackProps,
-            vpcId: vpcStack.vpc.vpcId,
             containerPort: parseInt(envTyped.PORT),
             dockerRunArgs: {
                 NODE_ENV: process.env.NODE_ENV!,
@@ -90,28 +91,10 @@ export class CdkLangfuseEcrEcsDeploymentStack extends cdk.Stack {
             dbServerSG: postgresStack.dbServerSG,
         };
 
-        // new CdkAppRunnerWithVpcDeploymentStack(this, `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkAppRunnerWithVpcDeploymentStack`, {
-        //     ...appRunnerStackProps,
-        //     stackName: `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkAppRunnerWithVpcDeploymentStack`,
-        //     description: `Langfuse App Runner deployment stack for ${props.environment} environment in ${props.deployRegion} region.`,
-        // });
-
-        // new CdkAppRunnerWithVpcDeploymentStack2(this, `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkAppRunnerWithVpcDeploymentStack2`, {
-        //     ...appRunnerStackProps,
-        //     stackName: `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkAppRunnerWithVpcDeploymentStack2`,
-        //     description: `Langfuse App Runner deployment stack for ${props.environment} environment in ${props.deployRegion} region.`,
-        // });
-
-        new CdkFargateWithVpcDeploymentStack(this, `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkAppRunnerWithVpcDeploymentStack2`, {
-            ...appRunnerStackProps,
-            stackName: `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkAppRunnerWithVpcDeploymentStack2`,
-            description: `Langfuse App Runner deployment stack for ${props.environment} environment in ${props.deployRegion} region.`,
+        new CdkFargateWithVpcDeploymentStack(this, `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkFargateWithVpcDeploymentStack`, {
+            ...ecsStackProps,
+            stackName: `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkFargateWithVpcDeploymentStack`,
+            description: `Langfuse Fargate deployment stack for ${props.environment} environment in ${props.deployRegion} region.`,
         });
-
-        // new CdkAppRunnerWithVpcDeploymentStack3(this, `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkAppRunnerWithVpcDeploymentStack3`, {
-        //     ...appRunnerStackProps,
-        //     stackName: `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkAppRunnerWithVpcDeploymentStack3`,
-        //     description: `Langfuse App Runner deployment stack for ${props.environment} environment in ${props.deployRegion} region.`,
-        // });
     }
 }

@@ -15,6 +15,4 @@ export interface LangfuseBaseStackProps extends cdk.StackProps {
      * The name of the application associated with the deployment.
      */
     readonly appName: string;
-
-    readonly envTyped: IEnvTypes;
 }

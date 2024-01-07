@@ -62,7 +62,6 @@ export class CdkPostgreSQLDeploymentStack extends cdk.NestedStack {
                     ec2.InstanceClass.BURSTABLE3,
                     ec2.InstanceSize.SMALL
                 ),
-                // TODOP might be change credential via https://mim-armand.medium.com/easy-deploy-postgresql-rds-with-aws-cdk-f8a2753a93ab
                 credentials: rds.Credentials.fromPassword(props.databaseArgs.POSTGRES_USER, cdk.SecretValue.unsafePlainText(props.databaseArgs.POSTGRES_PASSWORD)),
                 vpc: langfuseVpc,
                 vpcSubnets: {

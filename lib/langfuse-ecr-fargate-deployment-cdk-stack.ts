@@ -3,11 +3,11 @@ import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as ecs from 'aws-cdk-lib/aws-ecs';
 import * as ecs_patterns from 'aws-cdk-lib/aws-ecs-patterns';
 import * as iam from 'aws-cdk-lib/aws-iam';
-import { CdkAppRunnerWithVpcDeploymentStackProps } from './LangfuseAppRunnerWithVpcDeploymentStackProps';
 import { Construct } from 'constructs';
+import { LangfuseEcsStackProps } from './LangfuseEcsStackProps';
 
 export class CdkFargateWithVpcDeploymentStack extends cdk.NestedStack {
-    constructor(scope: Construct, id: string, props: CdkAppRunnerWithVpcDeploymentStackProps) {
+    constructor(scope: Construct, id: string, props: LangfuseEcsStackProps) {
         super(scope, id, props);
 
         const existingVpc = props.vpc;
@@ -33,6 +33,7 @@ export class CdkFargateWithVpcDeploymentStack extends cdk.NestedStack {
         // define a cluster with spot instances, linux type
         const cluster = new ecs.Cluster(this, `DeploymentCluster`, {
             vpc: existingVpc,
+            containerInsights: true,
             clusterName: `${props.appName}-${props.environment}-Cluster`,
         });
 

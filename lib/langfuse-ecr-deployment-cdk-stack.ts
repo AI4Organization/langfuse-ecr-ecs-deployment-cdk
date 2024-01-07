@@ -2,7 +2,7 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as ecrDeploy from 'cdk-ecr-deployment';
 import * as ecr from 'aws-cdk-lib/aws-ecr';
-import { LangfuseDockerImageEcrDeploymentCdkStackProps } from './LangfuseDockerImageEcrDeploymentCdkStackProps';
+import { LangfuseEcrStackProps } from './LangfuseEcrStackProps';
 import { LATEST_IMAGE_VERSION } from '../bin/langfuse-ecr-ecs-deployment-cdk';
 
 /**
@@ -22,9 +22,9 @@ export class LangfuseEcrDeploymentCdkStack extends cdk.NestedStack {
    * Constructs a new instance of the LangfuseEcrDeploymentCdkStack class.
    * @param {Construct} scope - The scope in which to define this construct.
    * @param {string} id - The scoped construct ID. Must be unique amongst siblings in the same scope.
-   * @param {LangfuseDockerImageEcrDeploymentCdkStackProps} props - The stack properties.
+   * @param {LangfuseEcrStackProps} props - The stack properties.
    */
-  constructor(scope: Construct, id: string, props: LangfuseDockerImageEcrDeploymentCdkStackProps) {
+  constructor(scope: Construct, id: string, props: LangfuseEcrStackProps) {
     super(scope, id, props);
 
     this.ecrRepository = new ecr.Repository(this, `${props.appName}-${props.environment}-DockerImageEcrRepository`, {
