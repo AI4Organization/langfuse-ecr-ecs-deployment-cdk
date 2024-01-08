@@ -54,11 +54,28 @@ export class CdkFargateWithVpcDeploymentStack extends cdk.NestedStack {
             assumedBy: new iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
         });
 
+        // Add permissions to the Task Role
         taskRole.addManagedPolicy(
             iam.ManagedPolicy.fromAwsManagedPolicyName(
                 "service-role/AmazonECSTaskExecutionRolePolicy"
             )
         );
+
+        // Add permissions to the Task Role to allow it to pull images from ECR
+        taskRole.addToPolicy(new iam.PolicyStatement(
+            {
+                effect: iam.Effect.ALLOW,
+                actions: [
+                    "ecr:GetAuthorizationToken",
+                    "ecr:BatchCheckLayerAvailability",
+                    "ecr:GetDownloadUrlForLayer",
+                    "ecr:BatchGetImage",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                ],
+                resources: ["*"],
+            }
+        ));
 
         const containerPort = props.containerPort;
         console.log(`containerPort: ${containerPort}`);
