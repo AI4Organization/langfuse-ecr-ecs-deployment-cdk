@@ -23,7 +23,7 @@ import { CdkFargateCloudFrontWithVpcDeploymentStack } from './langfuse-ecr-farga
  * @extends cdk.Stack
  */
 export class CdkLangfuseEcrEcsFargateCloudFrontDeploymentStack extends cdk.Stack {
-    constructor(scope: cdk.App, id: string, props: LangfuseBaseStackProps) {
+    constructor(scope: Construct, id: string, props: LangfuseBaseStackProps) {
         super(scope, id, props);
 
         const envTyped: IEnvTypes = {
