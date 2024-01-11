@@ -10,7 +10,6 @@ import { LangfusePostgresStackProps } from './LangfusePostgresStackProps';
 import { CdkPostgreSQLDeploymentStack } from './langfuse-postgres-deployment-cdk-stack';
 import { CdkFargateWithVpcDeploymentStack } from './langfuse-ecr-fargate-deployment-cdk-stack';
 import { LangfuseEcsStackProps } from './LangfuseEcsStackProps';
-import { CdkFargateCloudFrontWithVpcDeploymentStack } from './langfuse-ecr-fargate-cloudfront-deployment-cdk-stack';
 
 /**
  * Represents a CDK stack for deploying Langfuse ECR and ECS resources.
@@ -96,11 +95,6 @@ export class CdkLangfuseEcrEcsFargateCloudFrontDeploymentStack extends cdk.Stack
         new CdkFargateWithVpcDeploymentStack(this, `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkFargateWithVpcDeploymentStack`, {
             ...ecsStackProps,
             stackName: `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkFargateWithVpcDeploymentStack`,
-            description: `Langfuse Fargate deployment stack for ${props.environment} environment in ${props.deployRegion} region.`,
-        });
-
-        new CdkFargateCloudFrontWithVpcDeploymentStack(this, `${envTyped.APP_NAME}-${props.environment}-${props.deployRegion}-CdkFargateCloudFrontWithVpcDeploymentStack`, {
-            ...ecsStackProps,
             description: `Langfuse Fargate deployment stack for ${props.environment} environment in ${props.deployRegion} region.`,
         });
     }
