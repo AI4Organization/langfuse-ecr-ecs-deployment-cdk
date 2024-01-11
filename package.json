@@ -1,6 +1,6 @@
 {
   "name": "langfuse-ecr-ecs-deployment-cdk",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "bin": {
     "langfuse-ecr-ecs-deployment-cdk": "bin/langfuse-ecr-ecs-deployment-cdk.js"
   },
@@ -12,7 +12,7 @@
   },
   "devDependencies": {
     "@types/jest": "^29.5.11",
-    "@types/node": "20.10.6",
+    "@types/node": "^20.11.0",
     "@types/source-map-support": "^0.5.10",
     "aws-cdk": "2.118.0",
     "jest": "^29.7.0",
@@ -24,7 +24,7 @@
     "@aws-cdk/aws-apprunner-alpha": "2.118.0-alpha.0",
     "@cdklabs/cdk-ecs-codedeploy": "^0.0.233",
     "aws-cdk-lib": "2.118.0",
-    "cdk-ecr-deployment": "^3.0.5",
+    "cdk-ecr-deployment": "^3.0.7",
     "constructs": "^10.3.0",
     "dotenv": "^16.3.1",
     "source-map-support": "^0.5.21"
