@@ -1,6 +1,6 @@
 {
   "name": "langfuse-ecr-ecs-deployment-cdk",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "bin": {
     "langfuse-ecr-ecs-deployment-cdk": "bin/langfuse-ecr-ecs-deployment-cdk.js"
   },
