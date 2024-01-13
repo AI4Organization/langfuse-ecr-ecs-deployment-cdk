@@ -6,6 +6,18 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 import { LangfuseEcsStackProps } from './LangfuseEcsStackProps';
 
+/**
+ * Represents a CDK stack for deploying a Fargate service within a VPC.
+ *
+ * This stack sets up the necessary AWS resources to deploy a containerized
+ * application using AWS Fargate. It includes setting up an ECS cluster,
+ * task definitions, security groups, and an Application Load Balancer.
+ * The stack also configures auto-scaling for the Fargate service based on CPU utilization.
+ *
+ * @param {Construct} scope - The parent construct.
+ * @param {string} id - The unique identifier for the stack.
+ * @param {LangfuseEcsStackProps} props - The properties for the Fargate deployment stack.
+ */
 export class CdkFargateWithVpcDeploymentStack extends cdk.NestedStack {
     constructor(scope: Construct, id: string, props: LangfuseEcsStackProps) {
         super(scope, id, props);
@@ -42,11 +54,28 @@ export class CdkFargateWithVpcDeploymentStack extends cdk.NestedStack {
             assumedBy: new iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
         });
 
+        // Add permissions to the Task Role
         taskRole.addManagedPolicy(
             iam.ManagedPolicy.fromAwsManagedPolicyName(
                 "service-role/AmazonECSTaskExecutionRolePolicy"
             )
         );
+
+        // Add permissions to the Task Role to allow it to pull images from ECR
+        taskRole.addToPolicy(new iam.PolicyStatement(
+            {
+                effect: iam.Effect.ALLOW,
+                actions: [
+                    "ecr:GetAuthorizationToken",
+                    "ecr:BatchCheckLayerAvailability",
+                    "ecr:GetDownloadUrlForLayer",
+                    "ecr:BatchGetImage",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                ],
+                resources: ["*"],
+            }
+        ));
 
         const containerPort = props.containerPort;
         console.log(`containerPort: ${containerPort}`);

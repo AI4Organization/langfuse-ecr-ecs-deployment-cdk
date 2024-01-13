@@ -4,7 +4,7 @@ import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 import * as dotenv from 'dotenv';
 import { Platform } from 'aws-cdk-lib/aws-ecr-assets';
-import { CdkLangfuseEcrEcsFargateDeploymentStack } from '../lib/langfuse-ecr-ecs-fargate-deployment-cdk-stack';
+import { CdkLangfuseEcrEcsFargateCloudFrontDeploymentStack } from '../lib/langfuse-ecr-ecs-fargate-deployment-cdk-stack';
 import { checkEnvVariables } from '../utils/check-environment-variable';
 import { parsePlatforms } from '../utils/parsing-platform-variable';
 
@@ -22,13 +22,15 @@ export const LATEST_IMAGE_VERSION = 'latest';
 checkEnvVariables('ECR_REPOSITORY_NAME', 'APP_NAME', 'IMAGE_VERSION', 'PORT', 'PLATFORMS');
 
 const appName = process.env.APP_NAME!;
+console.log(`process.env.PLATFORMS: ${process.env.PLATFORMS}`);
 const platforms = parsePlatforms(process.env.PLATFORMS!.split(','));
 
 for (const cdkRegion of cdkRegions) {
   for (const environment of deployEnvironments) {
     for (const platform of platforms) {
       const platformString = platform === Platform.LINUX_AMD64 ? 'amd64' : 'arm';
-      new CdkLangfuseEcrEcsFargateDeploymentStack(app, `${appName}-${environment}-${cdkRegion}-CdkLangfuseEcrEcsFargateDeploymentStack`, {
+      console.log(`platformString: ${platformString}, deployRegion: ${cdkRegion}, environment: ${environment}`);
+      new CdkLangfuseEcrEcsFargateCloudFrontDeploymentStack(app, `${appName}-${environment}-${cdkRegion}-${platformString}-CdkLangfuseEcrEcsFargateCloudFrontDeploymentStack`, {
         env: {
           account,
           region: cdkRegion,
@@ -42,7 +44,7 @@ for (const cdkRegion of cdkRegions) {
         environment,
         platformString,
         appName,
-        stackName: `${appName}-${environment}-${cdkRegion}-CdkLangfuseEcrEcsFargateDeploymentStack`,
+        stackName: `${appName}-${environment}-${cdkRegion}-${platformString}-CdkLangfuseEcrEcsFargateCloudFrontDeploymentStack`,
         description: `Langfuse ECR/ECS with Fargate deployment stack for ${environment} environment in ${cdkRegion} region.`,
       });
     }

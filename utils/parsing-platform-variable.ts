@@ -9,6 +9,7 @@ import { Platform } from 'aws-cdk-lib/aws-ecr-assets';
  * @throws Will throw an error if an unsupported platform is encountered.
  */
 export function parsePlatforms(platforms: string[]): Platform[] {
+    console.log(`platforms: ${platforms}`);
     const platformList: Platform[] = [];
     for (const platform of platforms) {
         if (platform === 'LINUX_AMD64') {
