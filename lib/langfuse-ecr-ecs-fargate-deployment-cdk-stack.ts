@@ -21,7 +21,7 @@ import { LangfuseEcsStackProps } from './LangfuseEcsStackProps';
  *
  * @extends cdk.Stack
  */
-export class CdkLangfuseEcrEcsFargateDeploymentStack extends cdk.Stack {
+export class CdkLangfuseEcrEcsFargateCloudFrontDeploymentStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props: LangfuseBaseStackProps) {
         super(scope, id, props);
 
