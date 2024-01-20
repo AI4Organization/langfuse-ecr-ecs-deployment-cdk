@@ -111,7 +111,7 @@ export class CdkFargateWithVpcDeploymentStack extends cdk.NestedStack {
                 logDriver,
             },
             loadBalancer,
-            securityGroups: [ecsSecurityGroup, props.dbServerSG],
+            securityGroups: [ecsSecurityGroup],
             cpu: 1024,
             memoryLimitMiB: 2048,
             desiredCount: 1,
