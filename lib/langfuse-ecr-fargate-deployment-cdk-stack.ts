@@ -4,6 +4,23 @@ import * as ecs from 'aws-cdk-lib/aws-ecs';
 import * as ecs_patterns from 'aws-cdk-lib/aws-ecs-patterns';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
+import * as elbv2 from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import {
+    AllowedMethods,
+    CachePolicy,
+    Distribution,
+    Function,
+    FunctionCode,
+    FunctionEventType,
+    OriginProtocolPolicy,
+    OriginRequestCookieBehavior,
+    OriginRequestHeaderBehavior,
+    OriginRequestPolicy,
+    OriginRequestQueryStringBehavior,
+    ResponseHeadersPolicy,
+    SecurityPolicyProtocol,
+} from "aws-cdk-lib/aws-cloudfront";
+import { LoadBalancerV2Origin } from "aws-cdk-lib/aws-cloudfront-origins";
 import { LangfuseEcsStackProps } from './LangfuseEcsStackProps';
 
 /**
@@ -22,35 +39,28 @@ export class CdkFargateWithVpcDeploymentStack extends cdk.NestedStack {
     constructor(scope: Construct, id: string, props: LangfuseEcsStackProps) {
         super(scope, id, props);
 
+        const containerPort = props.containerPort;
+        console.log(`containerPort: ${containerPort}`);
+
         const existingVpc = props.vpc;
-        const httpSG = new ec2.SecurityGroup(this, `${props.appName}-${props.environment}-${props.platformString}-HttpSG`, {
-            vpc: existingVpc,
-            allowAllOutbound: true,
-        });
 
-        httpSG.addIngressRule(
-            ec2.Peer.anyIpv4(),
-            ec2.Port.tcp(80)
-        );
+        const loadBalancerSecurityGroup = new ec2.SecurityGroup(this, `${props.appName}-${props.environment}-${props.platformString}-Langfuse-ALB-SecGrp`, { vpc: existingVpc });
+        loadBalancerSecurityGroup.addIngressRule(ec2.Peer.ipv4('0.0.0.0/0'), ec2.Port.tcp(80)); // allow all inbound traffic on port 80
 
-        const httpsSG = new ec2.SecurityGroup(this, `${props.appName}-${props.environment}-${props.platformString}-HttpsSG`, {
-            vpc: existingVpc,
-            allowAllOutbound: true,
-        });
-        httpsSG.addIngressRule(
-            ec2.Peer.anyIpv4(),
-            ec2.Port.tcp(443)
-        );
+        const ecsSecurityGroup = new ec2.SecurityGroup(this, 'Langfuse-ECS-SecurityGroup', { vpc: existingVpc, allowAllOutbound: true });
+        ecsSecurityGroup.addIngressRule(loadBalancerSecurityGroup, ec2.Port.tcp(80));
+        ecsSecurityGroup.addIngressRule(loadBalancerSecurityGroup, ec2.Port.tcp(containerPort));
+        ecsSecurityGroup.addIngressRule(ecsSecurityGroup, ec2.Port.allTraffic());
 
         // define a cluster with spot instances, linux type
-        const cluster = new ecs.Cluster(this, `${props.appName}-${props.environment}-DeploymentCluster`, {
+        const cluster = new ecs.Cluster(this, `${props.appName}-${props.environment}-${props.platformString}-DeploymentCluster`, {
             vpc: existingVpc,
             containerInsights: true,
             clusterName: `${props.appName}-${props.environment}-Cluster`,
         });
 
         // Task Role
-        const taskRole = new iam.Role(this, "ecsTaskExecutionRole", {
+        const taskRole = new iam.Role(this, `${props.appName}-${props.environment}-${props.platformString}-ecsTaskExecutionRole`, {
             assumedBy: new iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
         });
 
@@ -77,17 +87,18 @@ export class CdkFargateWithVpcDeploymentStack extends cdk.NestedStack {
             }
         ));
 
-        const containerPort = props.containerPort;
-        console.log(`containerPort: ${containerPort}`);
+        const loadBalancer = new elbv2.ApplicationLoadBalancer(
+            this,
+            `${props.appName}-${props.environment}-${props.platformString}-LangfuseLoadBalancer`,
+            {
+                vpc: props.vpc,
+                securityGroup: loadBalancerSecurityGroup,
+                internetFacing: true,
+            }
+        );
 
         // create a task definition with CloudWatch Logs
         const logDriver = new ecs.AwsLogDriver({ streamPrefix: `${props.appName}-${props.environment}-${props.platformString}` });
-
-        // const certificate = new Certificate(this, `${props.appName}-${props.environment}-${props.platformString}-Certificate`, {
-        //     domainName: 'example.com',
-        //     subjectAlternativeNames: ['*.example.com'],
-        //     validation: CertificateValidation.fromDns(),
-        // });
 
         // Instantiate Fargate Service with just cluster and image
         const fargateService = new ecs_patterns.ApplicationLoadBalancedFargateService(this, `${props.appName}-${props.environment}-${props.platformString}-FargateService`, {
@@ -96,23 +107,15 @@ export class CdkFargateWithVpcDeploymentStack extends cdk.NestedStack {
                 image: ecs.ContainerImage.fromEcrRepository(props.ecrRepository, props.imageVersion),
                 taskRole,
                 containerPort,
-                environment: {
-                    ...props.dockerRunArgs,
-                },
                 enableLogging: true,
                 logDriver,
             },
-            securityGroups: [httpSG, httpsSG],
-            // certificate: acm.Certificate.fromCertificateArn(this, `${props.appName}-${props.environment}-FargateServiceCertificate`, props.certificateArn),
-            // certificate,
-            // redirectHTTP: true,
-            // protocol: cdk.aws_elasticloadbalancingv2.ApplicationProtocol.HTTPS,
-            // protocolVersion: cdk.aws_elasticloadbalancingv2.ApplicationProtocolVersion.HTTP1,
+            loadBalancer,
+            securityGroups: [ecsSecurityGroup, props.dbServerSG],
             cpu: 1024,
             memoryLimitMiB: 2048,
             desiredCount: 1,
-            publicLoadBalancer: true,
-            platformVersion: ecs.FargatePlatformVersion.VERSION1_4,
+            platformVersion: ecs.FargatePlatformVersion.LATEST,
             runtimePlatform: {
                 cpuArchitecture: props.platformString === `arm` ? ecs.CpuArchitecture.ARM64 : ecs.CpuArchitecture.X86_64,
                 operatingSystemFamily: ecs.OperatingSystemFamily.LINUX,
@@ -121,16 +124,77 @@ export class CdkFargateWithVpcDeploymentStack extends cdk.NestedStack {
 
         // Setup AutoScaling policy
         const scaling = fargateService.service.autoScaleTaskCount({ maxCapacity: 2, minCapacity: 1 });
-        scaling.scaleOnCpuUtilization(`${props.appName}-${props.environment}-CpuScaling`, {
+        scaling.scaleOnCpuUtilization(`${props.appName}-${props.environment}-${props.platformString}-CpuScaling`, {
             targetUtilizationPercent: 70,
             scaleInCooldown: cdk.Duration.seconds(60),
             scaleOutCooldown: cdk.Duration.seconds(60)
         });
 
-        // print out fargateService load balancer url
-        new cdk.CfnOutput(this, `${props.appName}-${props.environment}-${props.platformString}-FargateServiceLoadBalancerDNS`, {
-            value: fargateService.loadBalancer.loadBalancerDnsName,
-            exportName: `${props.appName}-${props.environment}-${props.platformString}-FargateServiceLoadBalancerDNS`,
+        fargateService.targetGroup.configureHealthCheck({
+            path: "/",
+            interval: cdk.Duration.seconds(60),
+            healthyHttpCodes: "200-499", // We have to check for 401 as the default state of "/" is unauthenticated
+        });
+
+        // Cloudfront Distribution
+        const langfuseOriginRequestPolicy = new OriginRequestPolicy(
+            this,
+            `${props.appName}-${props.environment}-${props.platformString}-OriginRequestPolicy`,
+            {
+                originRequestPolicyName: "LangfusePolicy",
+                comment: "Policy optimised for Langfuse",
+                cookieBehavior: OriginRequestCookieBehavior.all(),
+                headerBehavior: OriginRequestHeaderBehavior.all(),
+                queryStringBehavior: OriginRequestQueryStringBehavior.all(),
+            }
+        );
+
+        /** Fixes Cors Issue */
+        const corsFunction = new Function(this, `${props.appName}-${props.environment}-${props.platformString}-CorsFunction`, {
+            code: FunctionCode.fromInline(`
+                function handler(event) {
+                    if(event.request.method === 'OPTIONS') {
+                        var response = {
+                            statusCode: 204,
+                            statusDescription: 'OK',
+                            headers: {
+                                'access-control-allow-origin': { value: '*' },
+                                'access-control-allow-headers': { value: '*' }
+                            }
+                        };
+                        return response;
+                    }
+                    return event.request;
+                }
+            `),
+        });
+
+        const langfuseDistribution = new Distribution(this, `${props.appName}-${props.environment}-${props.platformString}-LangfuseDistribution`, {
+            defaultBehavior: {
+                origin: new LoadBalancerV2Origin(loadBalancer, {
+                    protocolPolicy: OriginProtocolPolicy.HTTP_ONLY,
+                }),
+                originRequestPolicy: langfuseOriginRequestPolicy,
+                responseHeadersPolicy: ResponseHeadersPolicy.CORS_ALLOW_ALL_ORIGINS,
+                cachePolicy: CachePolicy.CACHING_DISABLED,
+                allowedMethods: AllowedMethods.ALLOW_ALL,
+                compress: true,
+                viewerProtocolPolicy: cdk.aws_cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+                functionAssociations: [
+                    {
+                        function: corsFunction,
+                        eventType: FunctionEventType.VIEWER_REQUEST,
+                    },
+                ],
+            },
+            minimumProtocolVersion: SecurityPolicyProtocol.TLS_V1_2_2021,
+            comment: "CloudFront distribution for Langfuse frontend application.",
+        });
+
+        new cdk.CfnOutput(this, `${props.appName}-${props.environment}-${props.platformString}-LangfuseURL`, {
+            value: `https://${langfuseDistribution.distributionDomainName}`,
+            description: "Langfuse CloudFront Distribution URL.",
+            exportName: `${props.appName}-${props.environment}-${props.platformString}-LangfuseDistributionURL`,
         });
     }
 }

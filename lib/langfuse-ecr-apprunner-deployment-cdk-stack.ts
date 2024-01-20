@@ -23,7 +23,7 @@ export class CdkAppRunnerWithVpcDeploymentStack extends cdk.NestedStack {
     const vpcConnector = new apprunner.VpcConnector(this, `${props.appName}-${props.environment}-${props.platformString}-VpcConnector`, {
       vpc: langfuseVpc,
       vpcSubnets: langfuseVpc.selectSubnets({ subnetType: ec2.SubnetType.PRIVATE_ISOLATED }),
-      // securityGroups: [props.dbServerSG],
+      securityGroups: [props.dbServerSG],
     });
 
     // define apprunner role to access ecr

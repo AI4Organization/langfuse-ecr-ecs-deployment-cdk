@@ -10,3 +10,14 @@ export function checkEnvVariables(...args: string[]) {
         throw new Error(`The following environment variables are not set yet: ${missingVariables.join(', ')}. Please set them in .env file or pipeline environments.`);
     }
 };
+
+export function getEnv(variableName: string, defaultValue?: string) {
+    const variable = process.env[variableName];
+    if (!variable) {
+        if (defaultValue !== undefined) {
+            return defaultValue;
+        }
+        throw new Error(`${variableName} environment variable must be defined.`);
+    }
+    return variable
+}
