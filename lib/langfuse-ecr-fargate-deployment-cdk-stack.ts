@@ -52,6 +52,8 @@ export class CdkFargateWithVpcDeploymentStack extends cdk.NestedStack {
         ecsSecurityGroup.addIngressRule(loadBalancerSecurityGroup, ec2.Port.tcp(containerPort));
         ecsSecurityGroup.addIngressRule(ecsSecurityGroup, ec2.Port.allTraffic());
 
+        // todo add egress rule to allow outbound traffic to postgres db from fargate
+
         // define a cluster with spot instances, linux type
         const cluster = new ecs.Cluster(this, `${props.appName}-${props.environment}-${props.platformString}-DeploymentCluster`, {
             vpc: existingVpc,
