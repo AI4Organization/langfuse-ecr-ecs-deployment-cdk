@@ -85,7 +85,7 @@
     "@aws-sdk/util-utf8-browser" "^3.0.0"
     tslib "^1.11.1"
 
-"@aws-sdk/client-codedeploy@^3.495.0":
+"@aws-sdk/client-codedeploy@^3.496.0":
   version "3.496.0"
   resolved "https://registry.yarnpkg.com/@aws-sdk/client-codedeploy/-/client-codedeploy-3.496.0.tgz#f1b8dfbf5d0c7b33fab4751df79cddf2adf043da"
   integrity sha512-Q0creBhydNqnwu7nniVDROf+sjMIwyu3OgBEpw6Dr3iAIbMV2Cw+11iybtI4pWvDLVyfSla7prPg3OQGDktJWA==
@@ -762,12 +762,12 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@cdklabs/cdk-ecs-codedeploy@^0.0.237":
-  version "0.0.237"
-  resolved "https://registry.yarnpkg.com/@cdklabs/cdk-ecs-codedeploy/-/cdk-ecs-codedeploy-0.0.237.tgz#9ceb01474b0dc3b755629acde52b399895622eb4"
-  integrity sha512-clsJ1lcLC56vSrosq63lwfTqpZr4siThrftP+WgAYPBRjP+jgBrFDH7cRMc0jwkhxebtsjOPoa0xVnlg0X++Dw==
+"@cdklabs/cdk-ecs-codedeploy@^0.0.238":
+  version "0.0.238"
+  resolved "https://registry.yarnpkg.com/@cdklabs/cdk-ecs-codedeploy/-/cdk-ecs-codedeploy-0.0.238.tgz#1ae80822cfbd8982eecfa7fb2cb5bdc6c31d12f3"
+  integrity sha512-D3mIUa4jcN0kFNydDawQlIpDcAAVdv3Z7VYoqrEB7rMtoImOi4Bmpok2hiTcaVwkvywcNkCrGkOuTAqBqej8tw==
   dependencies:
-    "@aws-sdk/client-codedeploy" "^3.495.0"
+    "@aws-sdk/client-codedeploy" "^3.496.0"
     jmespath "^0.16.0"
 
 "@cspotcode/source-map-support@^0.8.0":
