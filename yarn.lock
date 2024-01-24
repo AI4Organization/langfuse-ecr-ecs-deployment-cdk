@@ -25,11 +25,6 @@
   resolved "https://registry.yarnpkg.com/@aws-cdk/asset-node-proxy-agent-v6/-/asset-node-proxy-agent-v6-2.0.1.tgz#6dc9b7cdb22ff622a7176141197962360c33e9ac"
   integrity sha512-DDt4SLdLOwWCjGtltH4VCST7hpOI5DzieuhGZsBpZ+AgJdSI2GCjklCXm0GCTwJG/SolkL5dtQXyUKgg9luBDg==
 
-"@aws-cdk/aws-apprunner-alpha@2.122.0-alpha.0":
-  version "2.122.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/aws-apprunner-alpha/-/aws-apprunner-alpha-2.122.0-alpha.0.tgz#ddf551ad33ec70654dd253fc6bfab8a605f3af38"
-  integrity sha512-TJQs+YWxNjLsPNQIF7FEUtRfBK4AkC7EPQOxJ/a+UwdH1BFx+wBkdk/5QRnsmLaOlDEP0t0BBA+JCR6P8xHFkA==
-
 "@aws-crypto/crc32@3.0.0":
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/@aws-crypto/crc32/-/crc32-3.0.0.tgz#07300eca214409c33e3ff769cd5697b57fdd38fa"
