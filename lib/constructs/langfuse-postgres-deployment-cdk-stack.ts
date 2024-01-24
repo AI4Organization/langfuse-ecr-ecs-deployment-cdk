@@ -30,7 +30,7 @@ export class CdkPostgreSQLDeploymentStack extends cdk.NestedStack {
             ec2.Peer.ipv4(langfuseVpc.vpcCidrBlock),
             ec2.Port.tcp(databasePort),
             "Allow database access from within VPC."
-        );
+        ); // todo remove this and move to fargate stack
 
         // Create a new IAM role that can be assumed by the RDS service
         const rdsRole = new iam.Role(this, `${props.appName}-${props.environment}-RDSRole`, {

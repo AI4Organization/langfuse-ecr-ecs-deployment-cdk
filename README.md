@@ -2,6 +2,10 @@
 
 This repository contains the AWS CDK TypeScript code for deploying the LangFuse application using Amazon Elastic Container Registry (ECR) and Amazon Elastic Container Service (ECS).
 
+## Architecture
+
+![Langfuse Serverless Architecture](assets/architect.png)
+
 ## Table of Contents
 
 - [Stacks](#stacks)

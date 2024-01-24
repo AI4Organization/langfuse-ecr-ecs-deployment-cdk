@@ -1,5 +1,5 @@
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
-import { DatabaseEnvTyped } from '../process-env-typed';
+import { DatabaseEnvTyped } from '../../process-env-typed';
 import { LangfuseEcrStackProps } from './LangfuseEcrStackProps';
 
 export interface LangfusePostgresStackProps extends LangfuseEcrStackProps {
