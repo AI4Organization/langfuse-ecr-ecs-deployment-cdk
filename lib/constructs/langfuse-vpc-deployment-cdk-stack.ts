@@ -23,7 +23,7 @@ export class LangfuseVpcDeploymentCdkStack extends cdk.NestedStack {
         new cdk.CfnOutput(this, `${props.appName}-${props.environment}-${props.deployRegion}-vpc-id`, {
             value: this.vpc.vpcId,
             exportName: `${props.appName}-${props.environment}-${props.deployRegion}-vpc-id`,
-            description: "VPC ID",
+            description: `${props.appName}-${props.environment}-${props.deployRegion}-VPC ID.`,
         });
     }
 }
