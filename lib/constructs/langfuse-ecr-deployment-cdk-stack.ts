@@ -3,7 +3,7 @@ import { Construct } from 'constructs';
 import * as ecrDeploy from 'cdk-ecr-deployment';
 import * as ecr from 'aws-cdk-lib/aws-ecr';
 import { LangfuseEcrStackProps } from './LangfuseEcrStackProps';
-import { LATEST_IMAGE_VERSION } from '../bin/langfuse-ecr-ecs-deployment-cdk';
+import { LATEST_IMAGE_VERSION } from '../../bin/langfuse-ecr-ecs-deployment-cdk';
 
 /**
  * Represents a CDK stack for deploying Docker images to an Amazon ECR repository.

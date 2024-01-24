@@ -4,7 +4,7 @@ import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 import * as dotenv from 'dotenv';
 import { Platform } from 'aws-cdk-lib/aws-ecr-assets';
-import { CdkLangfuseEcrEcsFargateCloudFrontDeploymentStack } from '../lib/langfuse-ecr-ecs-fargate-deployment-cdk-stack';
+import { CdkLangfuseEcrEcsFargateCloudFrontDeploymentStack } from '../lib/langfuse-ecr-ecs-deployment-cdk-stack';
 import { checkEnvVariables } from '../utils/check-environment-variable';
 import { parsePlatforms } from '../utils/parsing-platform-variable';
 

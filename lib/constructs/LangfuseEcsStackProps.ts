@@ -1,6 +1,6 @@
 import * as cdk from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
-import { DockerEnvTyped } from '../process-env-typed';
+import { DockerEnvTyped } from '../../process-env-typed';
 import { LangfuseEcrStackProps } from './LangfuseEcrStackProps';
 
 export interface LangfuseEcsStackProps extends LangfuseEcrStackProps {

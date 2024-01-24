@@ -85,7 +85,7 @@ export class CdkFargateWithVpcDeploymentStack extends cdk.NestedStack {
                     "logs:CreateLogStream",
                     "logs:PutLogEvents"
                 ],
-                resources: ["*"],
+                resources: [props.ecrRepository.repositoryArn],
             }
         ));
 
